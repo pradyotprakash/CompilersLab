@@ -3,6 +3,10 @@
 
 %token VOID INT FLOAT RETURN LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP IF ELSE WHILE FOR INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT PTR_OP
 
+%{
+	#include "ast.h"
+}
+
 %%
 
 translation_unit 
@@ -175,5 +179,3 @@ declarator_list
 	: declarator
 	| declarator_list ',' declarator 
  	;
-
-

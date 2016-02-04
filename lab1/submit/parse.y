@@ -1,3 +1,4 @@
+%debug
 %scanner Scanner.h
 %scanner-token-function d_scanner.lex()
 
