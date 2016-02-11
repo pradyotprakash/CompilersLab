@@ -53,7 +53,7 @@ return_astnode::return_astnode(exp_astnode* n){
 void return_astnode::print(){
 	std::cout<<"(Return ";
 	node->print();
-	std::cout<<")";
+	std::cout<<") ";
 }
 
 if_astnode::if_astnode(exp_astnode* n1, stmt_astnode** n2){
@@ -69,7 +69,7 @@ void if_astnode::print(){
 	nodes[0]->print();
 	std::cout<<" ";
 	nodes[1]->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 while_astnode::while_astnode(exp_astnode* n1, stmt_astnode* n2){
@@ -82,7 +82,7 @@ void while_astnode::print(){
 	node->print();
 	std::cout<<" ";
 	node2->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 for_astnode::for_astnode(exp_astnode** n1, stmt_astnode* n2){
@@ -99,7 +99,7 @@ void for_astnode::print(){
 		std::cout<<" ";
 	}
 	node->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 op_astnode2::op_astnode2(exp_astnode** n1, std::string n2){
@@ -112,7 +112,7 @@ void op_astnode2::print(){
 	std::cout<<"("<<op<<" ";
 	nodes[0]->print();
 	nodes[1]->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 op_astnode1::op_astnode1(exp_astnode* n1, std::string n2){
@@ -123,7 +123,7 @@ op_astnode1::op_astnode1(exp_astnode* n1, std::string n2){
 void op_astnode1::print(){
 	std::cout<<"("<<op<<" ";
 	node->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 funcall_astnode::funcall_astnode(std::string n1, std::vector<exp_astnode*> n2){
@@ -136,7 +136,7 @@ void funcall_astnode::print(){
 	for(int i=0;i<nodes.size();++i){
 		nodes[i]->print();	
 	}
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 floatconst_astnode::floatconst_astnode(float n){
@@ -144,7 +144,7 @@ floatconst_astnode::floatconst_astnode(float n){
 }
 
 void floatconst_astnode::print(){
-	std::cout<<"(FloatConst "<<val<<" )";
+	std::cout<<"(FloatConst "<<val<<" ) ";
 }
 
 intconst_astnode::intconst_astnode(int n){
@@ -152,7 +152,7 @@ intconst_astnode::intconst_astnode(int n){
 }
 
 void intconst_astnode::print(){
-	std::cout<<"(IntConst "<<val<<" )";
+	std::cout<<"(IntConst "<<val<<" ) ";
 }
 
 stringconst_astnode::stringconst_astnode(std::string n){
@@ -160,7 +160,7 @@ stringconst_astnode::stringconst_astnode(std::string n){
 }
 
 void stringconst_astnode::print(){
-	std::cout<<"(StringConst "<<val<<" )";
+	std::cout<<"(StringConst "<<val<<" ) ";
 }
 
 refast_astnode::refast_astnode(ref_astnode* n){
@@ -170,7 +170,7 @@ refast_astnode::refast_astnode(ref_astnode* n){
 void refast_astnode::print(){
 	std::cout<<"(RefAst ";
 	ref->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 identifier_astnode::identifier_astnode(std::string n){
@@ -178,7 +178,7 @@ identifier_astnode::identifier_astnode(std::string n){
 }
 
 void identifier_astnode::print(){
-	std::cout<<"\""<<name<<"\"";
+	std::cout<<" \""<<name<<"\" ";
 }
 
 arrayref_astnode::arrayref_astnode(identifier_astnode* n1, std::vector<exp_astnode*> n2){
@@ -194,7 +194,7 @@ void arrayref_astnode::print(){
 		nodes[i]->print();
 		std::cout<<" ";
 	}
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 pointer_astnode::pointer_astnode(ref_astnode* n){
@@ -204,7 +204,7 @@ pointer_astnode::pointer_astnode(ref_astnode* n){
 void pointer_astnode::print(){
 	std::cout<<"(Pointer ";
 	node->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
 
 deref_astnode::deref_astnode(ref_astnode* n){
@@ -212,10 +212,34 @@ deref_astnode::deref_astnode(ref_astnode* n){
 }
 
 void deref_astnode::print(){
-	std::cout<<"(Deref ";
+	std::cout<<"(DEREF ";
 	node->print();
-	std::cout<<" )";
+	std::cout<<" ) ";
 }
+
+dotref_astnode::dotref_astnode(ref_astnode* n, identifier_astnode* i){
+	node=n;
+	id=i;
+}
+
+void dotref_astnode::print(){
+	std::cout<<"(DOT ";
+	node->print();
+	std::cout<<" ) ";
+}
+
+ptrop_astnode::ptrop_astnode(ref_astnode* n, identifier_astnode* i){
+	node=n;
+	id=i;
+}
+
+void ptrop_astnode::print(){
+	std::cout<<"(-> ";
+	node->print();
+	std::cout<<" ) ";
+}
+
+
 
 #define ASTCPP
 #endif

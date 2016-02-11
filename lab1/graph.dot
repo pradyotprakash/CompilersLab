@@ -191,11 +191,95 @@ digraph G {ordering=out;
 96 -> 95
 97[label="additive_expression"]
 97 -> 96
-98[label="relational_expression"]
-98 -> 97
-99[label="equality_expression"]
+99[label="primary_expression"]
+98[label="INT_CONSTANT"]
 99 -> 98
-100[label="logical_and_expression"]
+100[label="postfix_expression"]
 100 -> 99
-101[label="expression"]
-101 -> 100}
+101[label="unary_expression"]
+101 -> 100
+102[label="multiplicative_expression"]
+102 -> 101
+104[label="additive_expression"]
+103[label="+"]
+104 -> 97
+104 -> 103
+104 -> 102
+105[label="relational_expression"]
+105 -> 104
+106[label="equality_expression"]
+106 -> 105
+107[label="logical_and_expression"]
+107 -> 106
+108[label="expression"]
+108 -> 107
+111[label="assignment_statement"]
+110[label="="]
+109[label=";"]
+111 -> 90
+111 -> 110
+111 -> 108
+111 -> 109
+112[label="statement"]
+112 -> 111
+114[label="l_expression"]
+113[label="IDENTIFIER"]
+114 -> 113
+116[label="primary_expression"]
+115[label="INT_CONSTANT"]
+116 -> 115
+117[label="postfix_expression"]
+117 -> 116
+118[label="unary_expression"]
+118 -> 117
+119[label="multiplicative_expression"]
+119 -> 118
+120[label="additive_expression"]
+120 -> 119
+121[label="relational_expression"]
+121 -> 120
+122[label="equality_expression"]
+122 -> 121
+123[label="logical_and_expression"]
+123 -> 122
+124[label="expression"]
+124 -> 123
+127[label="assignment_statement"]
+126[label="="]
+125[label=";"]
+127 -> 114
+127 -> 126
+127 -> 124
+127 -> 125
+128[label="statement"]
+128 -> 127
+133[label="selection_statement"]
+132[label="IF"]
+131[label="("]
+130[label=")"]
+129[label="ELSE"]
+133 -> 132
+133 -> 131
+133 -> 88
+133 -> 130
+133 -> 112
+133 -> 129
+133 -> 128
+134[label="statement"]
+134 -> 133
+135[label="statement_list"]
+135 -> 69
+135 -> 134
+
+138[label="compound_statement"]
+137[label="{"]
+136[label="}"]
+138 -> 137
+138 -> 135
+138 -> 136
+139[label="function_definition"]
+139 -> 2
+139 -> 6
+139 -> 138
+140[label="translation_unit"]
+140 -> 139}

@@ -1,5 +1,3 @@
-
-
 %scanner Scanner.h
 %scanner-token-function d_scanner.lex()
 
@@ -294,10 +292,10 @@ l_expression
         	($$) = new pointer_astnode($2);
         }
         | l_expression '.' IDENTIFIER {
-        	// ($$) = new dotref_astnode($1, $3); 
+        	($$) = new dotref_astnode($1, new identifier_astnode($3)); 
         }
         | l_expression PTR_OP IDENTIFIER {
-        	// ($$) = new ptrop_astnode($1, $3);
+        	($$) = new ptrop_astnode($1, new identifier_astnode($3));
         }
         ;
 

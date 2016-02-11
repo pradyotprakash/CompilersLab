@@ -1,5 +1,0 @@
-void main()
-{
-for(x=0;x<5;x++);
-if(y>1) x=x-1; else ;
-}

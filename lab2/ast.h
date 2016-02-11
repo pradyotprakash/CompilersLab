@@ -172,5 +172,24 @@ public:
 	void print();
 };
 
+class dotref_astnode: public ref_astnode{
+protected:
+	ref_astnode* node;
+	identifier_astnode* id;
+public:
+	dotref_astnode(ref_astnode*, identifier_astnode*);
+	void print();
+};
+
+class ptrop_astnode: public ref_astnode{
+protected:
+	ref_astnode* node;
+	identifier_astnode* id;
+public:
+	ptrop_astnode(ref_astnode*, identifier_astnode*);
+	void print();
+};
+
+
 #define ASTH
 #endif
