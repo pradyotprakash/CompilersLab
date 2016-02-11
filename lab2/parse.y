@@ -73,15 +73,15 @@ constant_expression
 compound_statement
 		: '{' '}' {
 			$$ = new seq_astnode(std::vector<stmt_astnode*>(1, new empty_astnode()));
-			($$)->print();
+			($$)->print(0);
 		}		
 		| '{' statement_list '}' {
 			$$ = new seq_astnode($2);
-			($$)->print();
+			($$)->print(0);
 		}
         | '{' declaration_list statement_list '}' {
         	$$ = new seq_astnode($3);
-        	($$)->print();
+        	($$)->print(0);
         }
 		;
 
@@ -262,7 +262,7 @@ primary_expression
 	    	exp_astnode* args[2];
 	    	args[0]=$1;
 	    	args[1]=$3;
-        	($$)=new op_astnode2(args, "ASSIGN");
+        	($$)=new op_astnode2(args, "ASSIGN_EXP");
 	    }
 	    | INT_CONSTANT {
 	    	($$) = new intconst_astnode($1);

@@ -22,9 +22,9 @@ struct 			return Parser::STRUCT;
 
 "/*"[^*]*(\*([^/*][^*]*)?)*"*/" // skip return Parser::COMMENT;
 
-([0-9]+)|(0[bB][01]*)|(0[0-7]*)|(0[xX][0-9a-fA-F]*) {Parser::d_val__ = std::string(matched()); return Parser::INT_CONSTANT;}
+([0-9]+)|(0[bB][01]*)|(0[0-7]*)|(0[xX][0-9a-fA-F]*) {Parser::d_val__ = stoi(std::string(matched())); return Parser::INT_CONSTANT;}
 
-([0-9]+\.([0-9]*([eE]([+\-]?)[0-9]+)?))|([0-9]*\.([0-9]+([eE]([+\-]?)[0-9]+)?)) {Parser::d_val__ = std::string(matched()); return Parser::FLOAT_CONSTANT;}
+([0-9]+\.([0-9]*([eE]([+\-]?)[0-9]+)?))|([0-9]*\.([0-9]+([eE]([+\-]?)[0-9]+)?)) {Parser::d_val__ = stof(std::string(matched())); return Parser::FLOAT_CONSTANT;}
 
 \"[[:alpha:][:digit:]( )(\t)(\n)(\\)(\")]*\" {Parser::d_val__ = std::string(matched()); return Parser::STRING_LITERAL;}
 
