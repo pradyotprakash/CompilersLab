@@ -37,19 +37,19 @@ void seq_astnode::print(int l){
 	std::cout<<"])\n";
 }
 
-ass_astnode::ass_astnode(exp_astnode* n1, exp_astnode* n2){
+assign_astnode::assign_astnode(ref_astnode* n1, exp_astnode* n2){
     l = n1;
     r = n2;
 }
 
-void ass_astnode::print(int l){
+void assign_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
 	std::cout<<"(Ass ";
 	this->l->print(0);
 	std::cout<<" ";
 	r->print(0);
-	std::cout<<") ";
+	std::cout<<")\n";
 }
 
 return_astnode::return_astnode(exp_astnode* n){
@@ -211,29 +211,9 @@ void identifier_astnode::print(int l){
 	std::cout<<"(Id \""<<name<<"\") ";
 }
 
-/*
-arrayref_astnode::arrayref_astnode(identifier_astnode* n1, std::vector<exp_astnode*> n2){
-	id=n1;
-	nodes=n2;
-}
-
-void arrayref_astnode::print(int l){
-	for(int i=0;i<l;++i)
-		cout<<' ';
-	std::cout<<"( ";
-	id->print(0);
-	std::cout<<" ";
-	for(unsigned int i=0; i<nodes.size(); i++){
-		nodes[i]->print(0);
-		std::cout<<" ";
-	}
-	std::cout<<" ) ";
-}
-*/
-
 arrayref_astnode::arrayref_astnode(ref_astnode* b, exp_astnode* o){
-	base=b;
-	offset=o;
+	base = b;
+	offset = o;
 }
 
 void arrayref_astnode::print(int l){
@@ -271,29 +251,33 @@ void deref_astnode::print(int l){
 	std::cout<<") ";
 }
 
-dotref_astnode::dotref_astnode(ref_astnode* n, identifier_astnode* i){
+member_astnode::member_astnode(ref_astnode* n, identifier_astnode* i){
 	node=n;
 	id=i;
 }
 
-void dotref_astnode::print(int l){
+void member_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
 	std::cout<<"(DOT ";
 	node->print(0);
+	std::cout<<" ";
+	id->print(0);
 	std::cout<<") ";
 }
 
-ptrop_astnode::ptrop_astnode(ref_astnode* n, identifier_astnode* i){
+arrow_astnode::arrow_astnode(ref_astnode* n, identifier_astnode* i){
 	node=n;
 	id=i;
 }
 
-void ptrop_astnode::print(int l){
+void arrow_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
-	std::cout<<"(-> ";
+	std::cout<<"(Arrow ";
 	node->print(0);
+	std::cout<<" ";
+	id->print(0);
 	std::cout<<") ";
 }
 

@@ -37,12 +37,12 @@ public:
 	void print(int);
 };
 
-class ass_astnode: public stmt_astnode{
+class assign_astnode: public stmt_astnode{
 protected:
-	exp_astnode* l;
+	ref_astnode* l;
 	exp_astnode* r;
 public:
-	ass_astnode(exp_astnode*, exp_astnode*);
+	assign_astnode(ref_astnode*, exp_astnode*);
 	void print(int);
 };
 
@@ -146,16 +146,6 @@ public:
 	identifier_astnode(std::string);
 	void print(int);
 };
-/*
-class arrayref_astnode: public ref_astnode{
-protected:
-	identifier_astnode* id;
-	std::vector<exp_astnode*> nodes;
-public:
-	arrayref_astnode(identifier_astnode*, std::vector<exp_astnode*>);
-	void print(int);
-};
-*/
 
 class arrayref_astnode: public ref_astnode{
 protected:
@@ -182,21 +172,21 @@ public:
 	void print(int);
 };
 
-class dotref_astnode: public ref_astnode{
+class member_astnode: public ref_astnode{
 protected:
 	ref_astnode* node;
 	identifier_astnode* id;
 public:
-	dotref_astnode(ref_astnode*, identifier_astnode*);
+	member_astnode(ref_astnode*, identifier_astnode*);
 	void print(int);
 };
 
-class ptrop_astnode: public ref_astnode{
+class arrow_astnode: public ref_astnode{
 protected:
 	ref_astnode* node;
 	identifier_astnode* id;
 public:
-	ptrop_astnode(ref_astnode*, identifier_astnode*);
+	arrow_astnode(ref_astnode*, identifier_astnode*);
 	void print(int);
 };
 

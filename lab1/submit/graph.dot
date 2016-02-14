@@ -1,0 +1,127 @@
+digraph G {ordering=out;
+
+2[label="type_specifier"]
+1[label="INT"]
+2 -> 1
+6[label="fun_declarator"]
+5[label="IDENTIFIER"]
+4[label="("]
+3[label=")"]
+6 -> 5
+6 -> 4
+6 -> 3
+
+8[label="type_specifier"]
+7[label="INT"]
+8 -> 7
+10[label="declarator"]
+9[label="IDENTIFIER"]
+10 -> 9
+11[label="declarator_list"]
+11 -> 10
+13[label="declaration"]
+12[label=";"]
+13 -> 8
+13 -> 11
+13 -> 12
+14[label="declaration_list"]
+14 -> 13
+
+16[label="l_expression"]
+15[label="IDENTIFIER"]
+16 -> 15
+18[label="primary_expression"]
+17[label="INT_CONSTANT"]
+18 -> 17
+19[label="postfix_expression"]
+19 -> 18
+20[label="unary_expression"]
+20 -> 19
+21[label="multiplicative_expression"]
+21 -> 20
+22[label="additive_expression"]
+22 -> 21
+23[label="relational_expression"]
+23 -> 22
+24[label="equality_expression"]
+24 -> 23
+25[label="logical_and_expression"]
+25 -> 24
+26[label="expression"]
+26 -> 25
+29[label="assignment_statement"]
+28[label="="]
+27[label=";"]
+29 -> 16
+29 -> 28
+29 -> 26
+29 -> 27
+30[label="statement"]
+30 -> 29
+31[label="statement_list"]
+31 -> 30
+
+34[label="compound_statement"]
+33[label="{"]
+32[label="}"]
+34 -> 33
+34 -> 14
+34 -> 31
+34 -> 32
+35[label="function_definition"]
+35 -> 2
+35 -> 6
+35 -> 34
+36[label="translation_unit"]
+36 -> 35
+
+
+38[label="type_specifier"]
+37[label="INT"]
+38 -> 37
+42[label="fun_declarator"]
+41[label="IDENTIFIER"]
+40[label="("]
+39[label=")"]
+42 -> 41
+42 -> 40
+42 -> 39
+
+44[label="type_specifier"]
+43[label="INT"]
+44 -> 43
+46[label="declarator"]
+45[label="IDENTIFIER"]
+46 -> 45
+47[label="declarator_list"]
+47 -> 46
+49[label="declaration"]
+48[label=";"]
+49 -> 44
+49 -> 47
+49 -> 48
+50[label="declaration_list"]
+50 -> 49
+
+52[label="l_expression"]
+51[label="IDENTIFIER"]
+52 -> 51
+54[label="primary_expression"]
+53[label="STRING_LITERAL"]
+54 -> 53
+55[label="postfix_expression"]
+55 -> 54
+56[label="unary_expression"]
+56 -> 55
+57[label="multiplicative_expression"]
+57 -> 56
+58[label="additive_expression"]
+58 -> 57
+59[label="relational_expression"]
+59 -> 58
+60[label="equality_expression"]
+60 -> 59
+61[label="logical_and_expression"]
+61 -> 60
+62[label="expression"]
+62 -> 61}
