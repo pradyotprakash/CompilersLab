@@ -6,41 +6,120 @@
 #include <map>
 #include <string>
 
-struct baseType{
+using namespace std;
+
+
+class baseType{
+public:
 	std::string type;
 	int pointers;
+	
+	baseType(string type, int pointers){
+		this->type = type;
+		this->pointers = pointers;
+	}
+
+	baseType(){}
+
+	void print(){
+	 	cout<<"Type: "<<type<<" pointers: "<<pointers<<" ";
+	}
 };
 
-struct type{
-	struct baseType base;
+class type{
+public:
+	baseType base;
 	std::vector<int> sizes;
+
+	type(baseType b, vector<int> s){
+		base = b;
+		sizes = s;
+	}
+
+	type(){}
+
+	void print(){
+		cout<<"Base: ";base.print();cout<<" Arrays: ";
+		for(auto i: sizes) cout<<i<<" ";
+	}
 };
 
-class symbol_table_row{
+class variable{
 public:
-	struct type symbol_type;
-	std::string symbol_name;
-	int size;
+	type vtype;
+	string vname;
 	int offset;
+	int size;
 
-	symbol_table_row(struct type symbol_type, std::string symbol_name, int size, int offset){
-		this->symbol_type = symbol_type;
-		this->symbol_name = symbol_name;
-		this->size = size;
-		this->offset = offset;
+	variable(type t, string s, int o, int si){
+		vtype = t;
+		vname = s;
+		offset = o;
+		size = si;
+	}
+
+	variable(){}
+	void print(){
+		cout<<vname<<" ";vtype.print();cout<<" offset: "<<offset<<" size: "<<size<<" ";
 	}
 };
 
-class symbol_table{
+class globalSymbolTableRow{
 public:
-	std::map<std::string, symbol_table_row> rows;
-	// std::map<std::string, symbol_table*> structTables;
+	bool isFunction;
+	variable v;
+	std::vector<variable> args;
 
-	symbol_table(std::map<std::string, symbol_table_row> rows){//, std::map<std::string, symbol_table*> structTables){
-		this->rows = rows;
-		// this->structTables = structTables;
+	void print(){
+		cout<<isFunction<<" ";v.print();
+		for(auto v:args) v.print();
 	}
 
-	symbol_table(){}
 };
+
+
+class localSymbolTableRow{
+public:
+	variable v;
+	void print(){
+		v.print();
+	}
+};
+
+class localSymbolTable{
+public:
+	map<std::string, localSymbolTableRow> symbols;
+
+	void print(){
+		for(auto v: symbols){
+			v.second.print();
+		}
+	}
+};
+
+class globalSymbolTable{
+public:
+	map<std::string, globalSymbolTableRow> symbols;
+	map<std::string, localSymbolTable> symboltables; // should be used for structs and function bodies
+	void print(){
+		cout<<"Global symbol table:"<<endl;
+		for(auto s: symbols){
+			s.second.print();
+			cout<<endl;
+		}
+		cout<<"Second level symbol tables:"<<endl;
+		for(auto s:symboltables){
+			cout<<s.first<<" symbol table now"<<endl;
+			s.second.print();
+			cout<<endl;
+		}
+	}
+};
+
+
+
+
+
 #endif
+
+

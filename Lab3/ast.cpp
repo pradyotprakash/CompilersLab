@@ -1,8 +1,9 @@
 #include "ast.h"
-
 #ifndef ASTCPP
 
-map<std::string, symbol_table> st;
+
+
+globalSymbolTable gst;
 
 void stmt_astnode::print(int l){
 	std::cout<<"This should never be called; stmt_astnode"<<std::endl;

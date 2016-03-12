@@ -1,8 +1,18 @@
-struct t{
-	int x;
-	int y;
+struct a{
+	int** b[4][5], *c[3];
 };
 
+struct d{
+	int e;
+	struct b* f;
+};
+
+int* g(void* h){
+	void* i;
+	x=x+1;
+}
+
 int main(){
-	a = b;
+	int j;
+	x=x+1;
 }

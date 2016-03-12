@@ -21,12 +21,16 @@ public:
 class stmt_astnode: public abstract_astnode{
 public:
 	virtual void print(int);
+	vector<variable> declarations=vector<variable>(0);
+
 };
 
 class exp_astnode: public abstract_astnode{
 public:
 	bool lvalue = false;
 	bool valid = true;
+	bool canBeIndex = false;
+	int expvalue=-1;
 	virtual void print(int);
 };
 
