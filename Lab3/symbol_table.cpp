@@ -89,7 +89,7 @@ public:
 class localSymbolTable{
 public:
 	map<std::string, localSymbolTableRow> symbols;
-
+	int occupied=0;
 	void print(){
 		for(auto v: symbols){
 			v.second.print();
@@ -99,7 +99,7 @@ public:
 
 class globalSymbolTable{
 public:
-	map<std::string, globalSymbolTableRow> symbols;
+	map<string, globalSymbolTableRow> symbols;
 	map<std::string, localSymbolTable> symboltables; // should be used for structs and function bodies
 	void print(){
 		cout<<"Global symbol table:"<<endl;

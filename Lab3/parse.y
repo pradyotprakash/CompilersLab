@@ -40,9 +40,14 @@ struct_specifier
 		: STRUCT IDENTIFIER '{' declaration_list '}' ';' {
 			localSymbolTable lst;
 			lst.symbols.clear();
+			int offset = 0;
 			for(unsigned int i=0;i<($4).size();++i){
 				localSymbolTableRow lstr;
-				lstr.v = ($4)[i];
+				variable temp = ($4)[i];
+				temp.offset=offset;
+				temp.size=0; // TODO: getSize
+				offset+=temp.size;
+				lstr.v = temp;
 				lst.symbols[lstr.v.vname] = lstr;
 			}
 			gst.symboltables["struct "+$2]=lst;
@@ -54,13 +59,30 @@ struct_specifier
 function_definition
 	: type_specifier fun_declarator compound_statement {
 		($2).v.vtype.base.type = ($1).type;
-		gst.symbols[($2).v.vname] = $2;
+		gst.symbols[($2).v.vname]=($2);
 
 		localSymbolTable lst;
 		lst.symbols.clear();
+		int offset=0;
+		
+		vector<variable> args = gst.symbols[($2).v.vname].args;
+		for(unsigned int i = 0; i<args.size(); i++){
+			localSymbolTableRow lstr;
+			variable temp = args[i];
+			temp.offset = offset;
+			temp.size = 0; // TODO: getSize() of variable
+			offset+=temp.size;
+			lstr.v=temp;
+			lst.symbols[lstr.v.vname]=lstr;
+		}
+
 		for(unsigned int i = 0; i<($3)->declarations.size(); i++){
 			localSymbolTableRow lstr;
-			lstr.v=($3)->declarations[i];
+			variable temp = ($3)->declarations[i];
+			temp.offset = offset;
+			temp.size = 0; // TODO: getSize() of variable
+			offset+=temp.size;
+			lstr.v=temp;
 			lst.symbols[lstr.v.vname]=lstr;
 		}
 		gst.symboltables["function "+($2).v.vname]=lst;
@@ -108,9 +130,7 @@ fun_declarator
 		gstr.args.clear();
 		vector<variable> args;
 
-		// addParametersToLocalSymbolTable(&args, $3);
-		// TODO
-
+		args = $3;
 		gstr.args = args;
 		$$ = gstr;
 	}
