@@ -219,7 +219,7 @@ arrayref_astnode::arrayref_astnode(ref_astnode* b, exp_astnode* o){
 void arrayref_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
-	std::cout<<"( ";
+	std::cout<<"Arrayref ( ";
 	base->print(0);
 	std::cout<<" [";
 	offset->print(0);
