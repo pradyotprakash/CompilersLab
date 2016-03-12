@@ -89,7 +89,6 @@ public:
 class localSymbolTable{
 public:
 	map<std::string, localSymbolTableRow> symbols;
-	int occupied=0;
 	void print(){
 		for(auto v: symbols){
 			v.second.print();

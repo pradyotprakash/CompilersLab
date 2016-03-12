@@ -5,6 +5,31 @@
 
 globalSymbolTable gst;
 
+int getSize(variable v){
+	string type = v.vtype.base.type;
+	int baseSize=0;
+	if(type == "int") baseSize=4;
+	else if(type == "float") baseSize=4;
+	else if(type == "void") baseSize=0;
+	else if(type[0]=='s'){
+		int sum = 0;
+		localSymbolTable lst = gst.symboltables[type];
+		for(auto l: lst.symbols){
+			variable vv = l.second.v;
+			sum+=getSize(vv);
+		}
+		baseSize=sum;
+	}
+	if(v.vtype.base.pointers!=0) baseSize=4;
+	int mul = 1;
+	for(auto i: v.vtype.sizes){
+		mul*=i;
+	}
+
+
+	return baseSize*mul;
+}
+
 void stmt_astnode::print(int l){
 	std::cout<<"This should never be called; stmt_astnode"<<std::endl;
 }
@@ -28,7 +53,7 @@ void empty_astnode::print(int l){
 }
 
 seq_astnode::seq_astnode(std::vector<stmt_astnode*> n){
-    nodes = n;     
+    nodes = n;
 }
 
 void seq_astnode::print(int l){

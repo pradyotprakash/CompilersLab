@@ -23,6 +23,16 @@
 
 %%
 
+// TODO
+// 1) +, < for int and float
+// 2) typecasting = and to function parameters
+// 3) compatibility of two types
+// 4) return type of body of statements
+// 5) give types to each expression
+// 6) pointer, array, references weirdness
+// 7) errors!
+
+
 translation_unit 
 		:  struct_specifier
  		| function_definition {
@@ -45,7 +55,7 @@ struct_specifier
 				localSymbolTableRow lstr;
 				variable temp = ($4)[i];
 				temp.offset=offset;
-				temp.size=0; // TODO: getSize
+				temp.size=getSize(temp); 
 				offset+=temp.size;
 				lstr.v = temp;
 				lst.symbols[lstr.v.vname] = lstr;
@@ -70,7 +80,7 @@ function_definition
 			localSymbolTableRow lstr;
 			variable temp = args[i];
 			temp.offset = offset;
-			temp.size = 0; // TODO: getSize() of variable
+			temp.size = getSize(temp); 
 			offset+=temp.size;
 			lstr.v=temp;
 			lst.symbols[lstr.v.vname]=lstr;
@@ -80,7 +90,7 @@ function_definition
 			localSymbolTableRow lstr;
 			variable temp = ($3)->declarations[i];
 			temp.offset = offset;
-			temp.size = 0; // TODO: getSize() of variable
+			temp.size = getSize(temp); 
 			offset+=temp.size;
 			lstr.v=temp;
 			lst.symbols[lstr.v.vname]=lstr;
