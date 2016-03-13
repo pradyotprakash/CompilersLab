@@ -1,14 +1,23 @@
-struct t{
-	int x;
-	int y;
+struct hello {
+        int a;
+        float b;
 };
 
-struct y{
-	struct t a;
-	int z;
+struct hello_world {
+        int a;
+        float b;
 };
 
-int main(){
-	struct y a;
-	a.a;
+int get_a(struct hello k) {
+        return 1;
+}
+
+int main() {
+        int b;
+        int a;
+        struct hello_world k;  
+
+        a = get_a(k);
+
+        return 0;
 }

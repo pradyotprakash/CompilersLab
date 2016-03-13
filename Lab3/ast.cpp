@@ -6,6 +6,7 @@
 globalSymbolTable gst;
 string curFuncName;
 localSymbolTable curLocal;
+vector<type> parameterTypes;
 
 int getSize(variable v){
 	string type = v.vtype.base.type;
@@ -82,7 +83,6 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 
 void unaryTypeCheck(type t1, exp_astnode* e){
 	type t2 = e->expType;
-
 	if(isBasic(t1) && isBasic(t2)){
 		if(t1.base.type == "string" && t2.base.type != "string" ||
 			t2.base.type == "string" && t1.base.type != "string"){
@@ -90,6 +90,9 @@ void unaryTypeCheck(type t1, exp_astnode* e){
 		}
 		else{
 			e->expType = t1;	
+		}
+		if(t1.base.type != t2.base.type){
+			showError("Incompatible types!");
 		}
 		return;
 	}

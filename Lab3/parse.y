@@ -36,12 +36,12 @@
 translation_unit 
 		:  struct_specifier
  		| function_definition {
- 			cout<<"--------------"<<endl;
- 			gst.print();
+ 			// cout<<"--------------"<<endl;
+ 			// gst.print();
  		}
 	 	| translation_unit function_definition {
-	 		cout<<"------------"<<endl;
-	 		gst.print();
+	 		// cout<<"------------"<<endl;
+	 		// gst.print();
 	 		// cout<<d__lineNr<<endl;
 	 	}
 		| translation_unit struct_specifier
@@ -77,35 +77,34 @@ function_definition
 		} 
 		compound_statement {
 		
-		localSymbolTable lst;
-		lst.symbols.clear();
-		int offset=0;
-		
-		vector<variable> args = gst.symbols[($2).v.vname].args;
-		for(unsigned int i = 0; i<args.size(); i++){
-			localSymbolTableRow lstr;
-			variable temp = args[i];
-			temp.offset = offset;
-			temp.size = getSize(temp); 
-			offset+=temp.size;
-			lstr.v=temp;
-			lst.symbols[lstr.v.vname]=lstr;
-		}
+			localSymbolTable lst;
+			lst.symbols.clear();
+			int offset=0;
+			
+			vector<variable> args = gst.symbols[($2).v.vname].args;
+			for(unsigned int i = 0; i<args.size(); i++){
+				localSymbolTableRow lstr;
+				variable temp = args[i];
+				temp.offset = offset;
+				temp.size = getSize(temp); 
+				offset+=temp.size;
+				lstr.v=temp;
+				lst.symbols[lstr.v.vname]=lstr;
+			}
 
-		for(unsigned int i = 0; i<($4)->declarations.size(); i++){
-			localSymbolTableRow lstr;
-			variable temp = ($4)->declarations[i];
-			temp.offset = offset;
-			temp.size = getSize(temp); 
-			offset+=temp.size;
-			lstr.v=temp;
-			lst.symbols[lstr.v.vname]=lstr;
+			for(unsigned int i = 0; i<($4)->declarations.size(); i++){
+				localSymbolTableRow lstr;
+				variable temp = ($4)->declarations[i];
+				temp.offset = offset;
+				temp.size = getSize(temp); 
+				offset+=temp.size;
+				lstr.v=temp;
+				lst.symbols[lstr.v.vname]=lstr;
+			}
+			gst.symboltables["function "+($2).v.vname]=lst;
+			// TODO assign $$?
 		}
-		gst.symboltables["function "+($2).v.vname]=lst;
-		// TODO assign $$?
-
-	}
-	;
+		;
 
 type_specifier
 		: VOID {
@@ -135,7 +134,7 @@ type_specifier
 		;
 
 fun_declarator
-	: IDENTIFIER '(' parameter_list ')' {
+	: IDENTIFIER {curFuncName="function "+($1);}'(' parameter_list ')' {
 		globalSymbolTableRow gstr;
 		gstr.isFunction = true;
 		baseType bt("FUNC", 0);
@@ -146,7 +145,7 @@ fun_declarator
 		gstr.args.clear();
 		vector<variable> args;
 
-		args = $3;
+		args = $4;
 		gstr.args = args;
 		$$ = gstr;
 	}
@@ -209,10 +208,13 @@ declarator
 	}
 	;
 
-primary_expression	  
+primary_expression
 		: IDENTIFIER {
 			$$ = new identifier_astnode($1);
-			($$)->expType = curLocal.symbols[($1)].v.vtype;
+			if(curLocal.symbols.find($1)==curLocal.symbols.end()){
+				showError("Variable not declared before");
+			}
+			else ($$)->expType = curLocal.symbols[($1)].v.vtype;
 		}
 		| INT_CONSTANT {
 			$$ = new intconst_astnode($1);
@@ -237,20 +239,32 @@ compound_statement
 		: '{' '}' {
 			$$ = new seq_astnode(std::vector<stmt_astnode*>(1, new empty_astnode()));
 			($$)->print(0);
-		}		
+		}
 		| '{' statement_list '}' {
 			$$ = new seq_astnode($2);
 			($$)->print(0);
 		}
 		| '{' declaration_list {
+				for(variable v: gst.symbols[curFuncName].args){
+					localSymbolTableRow lstr;
+					variable temp = v;
+					lstr.v=temp;
+					if(curLocal.symbols.find(lstr.v.vname) != curLocal.symbols.end()){
+						showError("Variable redeclaration");
+					}
+					else curLocal.symbols[lstr.v.vname]=lstr;
+				}
 				for(unsigned int i = 0; i<($2).size(); i++){
-				localSymbolTableRow lstr;
-				variable temp = ($2)[i];
-				lstr.v=temp;
-				curLocal.symbols[lstr.v.vname]=lstr;
+					localSymbolTableRow lstr;
+					variable temp = ($2)[i];
+					lstr.v=temp;
+					if(curLocal.symbols.find(lstr.v.vname) != curLocal.symbols.end()){
+						showError("Variable redeclaration");
+					}
+					else curLocal.symbols[lstr.v.vname]=lstr;
 				}
 			}
-			 statement_list '}' {
+			statement_list '}' {
 				$$ = new seq_astnode($4);
 				($$)->print(0);
 				($$)->declarations = $2;
@@ -283,7 +297,8 @@ statement
 		| RETURN expression ';'	{
 			($$)=new return_astnode($2);
 			if(gst.symbols[curFuncName].v.vtype.base.type == "void")
-				cerr<<"void functions can't have a return type"<<endl;
+				showError("void functions can't have a return type", -1);
+			unaryTypeCheck(gst.symbols[curFuncName].v.vtype, $2);
 		}
 		;
 
@@ -301,15 +316,13 @@ expression
 			$$ = $1;
 		}
 		|  unary_expression '=' expression {
+			// TODO: Unary typecheck
+			unaryTypeCheck(($1)->expType, $3);
 			$$ = new assign_exp_astnode($1, $3);
 			if(!($1)->valid || !($1)->lvalue){
 				($$)->valid=false;
 				($$)->lvalue=false;
 			}
-
-			// TODO: Unary typecheck
-
-
 		};
 
 logical_or_expression			// The usual hierarchy that starts here...
@@ -462,10 +475,24 @@ postfix_expression
 		| IDENTIFIER '(' ')' {
 			($$) = new funcall_astnode($1, std::vector<exp_astnode*>(0));
 			($$)->expType = gst.symbols[($1)].v.vtype;
+			if(parameterTypes.size()!=0){
+					showError("Incorrect number of arguments");
+			}
 		}
-		| IDENTIFIER '(' expression_list ')' {
-			($$) = new funcall_astnode($1, $3);
-			($$)->expType = gst.symbols[($1)].v.vtype;
+		| IDENTIFIER '(' {
+				parameterTypes.clear();
+				for(auto x: gst.symbols[($1)].args){
+					parameterTypes.push_back(x.vtype);
+				}
+			}
+			expression_list ')' {
+				($$) = new funcall_astnode($1, $4);
+				($$)->expType = gst.symbols[($1)].v.vtype;
+				if(parameterTypes.size()!=0){
+					showError("Incorrect number of arguments");
+				}
+				
+
 		}
 		| postfix_expression '[' expression ']' {
 			($$) = new arrayref_astnode($1, $3);
@@ -485,10 +512,13 @@ postfix_expression
 		| postfix_expression '.' IDENTIFIER {
 			type b;
 			type t = ($1)->expType;
-			if(t.base.pointers!=0 || t.sizes.size()!=0){
+			if(t.base.pointers!=0 || t.sizes.size()!=0 || t.base.type[0]!='s'){
 				showError("DOT operator not on a struct type");
 			}
 			else{
+				if(gst.symboltables.find(t.base.type)==gst.symboltables.end()){
+					showError("struct has not been declared");
+				}
 				localSymbolTable lst = gst.symboltables[t.base.type];
 				if(lst.symbols.find($3)==lst.symbols.end()){
 					showError("member variable not declared in struct");
@@ -500,20 +530,56 @@ postfix_expression
 				($$)->expType=b;
 		}
 		| postfix_expression PTR_OP IDENTIFIER {
+			type b;
+			type t = ($1)->expType;
+			if(!((t.base.pointers==1 && t.sizes.size()==0) || 
+				(t.base.pointers==0 && t.sizes.size()==1))
+				)
+				 {
+				showError("PTROP operator not on a struct* type");
+			}
+			else if(t.base.type[0]!='s'){
+				showError("PTROP operator not on a struct* type");	
+			}
+			else{
+				localSymbolTable lst = gst.symboltables[t.base.type];
+				if(lst.symbols.find($3)==lst.symbols.end()){
+					showError("member variable not declared in struct");
+				}
+				else b=lst.symbols[$3].v.vtype;
+			}
+			($$) = new member_astnode($1, new identifier_astnode($3));
+			if(b.base.type!="")
+				($$)->expType=b;	
 			($$) = new arrow_astnode($1, new identifier_astnode($3));
 		}
 		| postfix_expression INC_OP {
 			($$) = new op_astnode1($1, "PP");
+			($$)->expType = ($1)->expType;
 		}
 	;
 
 expression_list
 		: expression {
-			($$) = vector<exp_astnode*>(1, $1);
+			if(parameterTypes.size()==0){
+				showError("Incorrect number of arguments", -1); // TODO
+			}
+			else{
+				unaryTypeCheck(parameterTypes[0], $1);
+				($$) = vector<exp_astnode*>(1, $1);
+				parameterTypes.erase(parameterTypes.begin());
+			}
 		}
 		| expression_list ',' expression {
-			($$) = $1;
-			($$).push_back($3);
+			if(parameterTypes.size()==0){
+				showError("Incorrect number of arguments", -1); // TODO
+			}
+			else{
+				unaryTypeCheck(parameterTypes[0], $3);
+				($$) = $1;
+				($$).push_back($3);
+				parameterTypes.erase(parameterTypes.begin());
+			}
 		}
 		;
 
