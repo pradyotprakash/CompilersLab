@@ -134,17 +134,17 @@ type_specifier
 		;
 
 fun_declarator
-	: IDENTIFIER {curFuncName="function "+($1);}'(' parameter_list ')' {
+	: IDENTIFIER  '(' {curFuncName="function "+($1);} parameter_list ')' {
 		globalSymbolTableRow gstr;
 		gstr.isFunction = true;
 		baseType bt("FUNC", 0);
 		vector<int> ve(0);
 		type t(bt, ve);
+		
 		variable v(t, $1, 0, 0);
 		gstr.v = v;
 		gstr.args.clear();
 		vector<variable> args;
-
 		args = $4;
 		gstr.args = args;
 		$$ = gstr;

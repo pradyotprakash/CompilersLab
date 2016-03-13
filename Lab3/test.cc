@@ -8,7 +8,7 @@ struct hello_world {
         float b;
 };
 
-int get_a(struct hello k) {
+int get_a(struct hello_world k) {
         return 1;
 }
 
