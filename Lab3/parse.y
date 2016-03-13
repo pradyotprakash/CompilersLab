@@ -347,7 +347,6 @@ equality_expression
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "EQ_OP");
-
 			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		| equality_expression NE_OP relational_expression {
@@ -452,11 +451,14 @@ unary_expression
 			($$)=new op_astnode1($2, $1);
 			$$->lvalue = $2->lvalue;
 			$$->valid = $2->valid;
+			($$)->expType = ($2)->expType;
 		}
 		;
 
 postfix_expression
-	: primary_expression
+	: 	primary_expression {
+			($$) = $1;
+		}
 		| IDENTIFIER '(' ')' {
 			($$) = new funcall_astnode($1, std::vector<exp_astnode*>(0));
 			($$)->expType = gst.symbols[($1)].v.vtype;
@@ -467,15 +469,35 @@ postfix_expression
 		}
 		| postfix_expression '[' expression ']' {
 			($$) = new arrayref_astnode($1, $3);
-			type t = ($1).expType;
-			if(type.base.type != "int"){
-				cerr<<"Array index not integer"<<endl;
+			type t = ($3)->expType;
+			if(t.base.type != "int"){
+				showError("Array index not integer", 0);
 			}
-			t = 
-			($$)->expType = ;
+
+			if(($1)->expType.sizes.size()==0){
+				showError("[ ] operator not defined", -1);
+			}
+			else {
+				($1)->expType.sizes.erase(($1)->expType.sizes.begin());
+			}
+			($$)->expType = ($1)->expType;
 		}
 		| postfix_expression '.' IDENTIFIER {
-			($$) = new member_astnode($1, new identifier_astnode($3)); 
+			type b;
+			type t = ($1)->expType;
+			if(t.base.pointers!=0 || t.sizes.size()!=0){
+				showError("DOT operator not on a struct type");
+			}
+			else{
+				localSymbolTable lst = gst.symboltables[t.base.type];
+				if(lst.symbols.find($3)==lst.symbols.end()){
+					showError("member variable not declared in struct");
+				}
+				else b=lst.symbols[$3].v.vtype;
+			}
+			($$) = new member_astnode($1, new identifier_astnode($3));
+			if(b.base.type!="")
+				($$)->expType=b;
 		}
 		| postfix_expression PTR_OP IDENTIFIER {
 			($$) = new arrow_astnode($1, new identifier_astnode($3));

@@ -1,9 +1,0 @@
-make
-struct a{
-	int y;
-};
-
-int main(){
-	int x;
-	x = x +1;
-}

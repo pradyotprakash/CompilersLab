@@ -1,18 +1,14 @@
-struct a{
-	int** b[4][5], *c[3];
-};
-
-struct d{
-	int e;
-	struct b* f;
-};
-
-void f(){
+struct t{
 	int x;
-	x = x+1;
-}
+	int y;
+};
+
+struct y{
+	struct t a;
+	int z;
+};
+
 int main(){
-	struct a p;
-	x=1;
-	return fd;
+	struct y a;
+	a.a;
 }

@@ -37,6 +37,10 @@ bool isBasic(type t){
 	return false;
 }
 
+void showError(string s, int lineno=-1){
+	cerr<<lineno<<": "<<s<<endl;
+}
+
 void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 	type t1 = e1->expType;
 	type t2 = e2->expType;
@@ -48,7 +52,7 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 		
 		if(s1 == "string" && s2 != "string" ||
 			s2 == "string" && s1 != "string")
-			cerr<<"Incompatible types\n";
+			showError("Incompatible types", -1);
 		else if(s1 == "float" && s2 == "int"){
 			e2->expType.base.type = "float";
 			e2->typeCasted = true;
@@ -82,7 +86,7 @@ void unaryTypeCheck(type t1, exp_astnode* e){
 	if(isBasic(t1) && isBasic(t2)){
 		if(t1.base.type == "string" && t2.base.type != "string" ||
 			t2.base.type == "string" && t1.base.type != "string"){
-			cerr<<"Return type mismatch\n";
+			showError("Return type mismatch", -1);
 		}
 		else{
 			e->expType = t1;	
