@@ -42,6 +42,7 @@ translation_unit
 	 	| translation_unit function_definition {
 	 		cout<<"------------"<<endl;
 	 		gst.print();
+	 		// cout<<d__lineNr<<endl;
 	 	}
 		| translation_unit struct_specifier
 		;
@@ -67,10 +68,15 @@ struct_specifier
 		;
 
 function_definition
-	: type_specifier fun_declarator compound_statement {
-		($2).v.vtype.base.type = ($1).type;
-		gst.symbols[($2).v.vname]=($2);
-
+	: type_specifier fun_declarator 
+		{
+			curFuncName=($2).v.vname; 
+			curLocal.symbols.clear(); 
+			($2).v.vtype.base.type = ($1).type;
+			gst.symbols[($2).v.vname]=($2);
+		} 
+		compound_statement {
+		
 		localSymbolTable lst;
 		lst.symbols.clear();
 		int offset=0;
@@ -86,9 +92,9 @@ function_definition
 			lst.symbols[lstr.v.vname]=lstr;
 		}
 
-		for(unsigned int i = 0; i<($3)->declarations.size(); i++){
+		for(unsigned int i = 0; i<($4)->declarations.size(); i++){
 			localSymbolTableRow lstr;
-			variable temp = ($3)->declarations[i];
+			variable temp = ($4)->declarations[i];
 			temp.offset = offset;
 			temp.size = getSize(temp); 
 			offset+=temp.size;
@@ -206,17 +212,21 @@ declarator
 primary_expression	  
 		: IDENTIFIER {
 			$$ = new identifier_astnode($1);
+			($$)->expType = curLocal.symbols[($1)].v.vtype;
 		}
 		| INT_CONSTANT {
 			$$ = new intconst_astnode($1);
 			($$)->canBeIndex=true;
 			($$)->expvalue = $1;
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		} 
 		| FLOAT_CONSTANT {
 			$$ = new floatconst_astnode($1);
+			($$)->expType = type(baseType("float", 0), vector<int>(0));
 		}
 		| STRING_LITERAL {
 			$$ = new stringconst_astnode($1);
+			($$)->expType = type(baseType("string", 0), vector<int>(0));
 		}
 		| '(' expression ')' {
 			$$ = $2;
@@ -232,11 +242,19 @@ compound_statement
 			$$ = new seq_astnode($2);
 			($$)->print(0);
 		}
-		| '{' declaration_list statement_list '}' {
-			$$ = new seq_astnode($3);
-			($$)->print(0);
-			($$)->declarations = $2;
-		}
+		| '{' declaration_list {
+				for(unsigned int i = 0; i<($2).size(); i++){
+				localSymbolTableRow lstr;
+				variable temp = ($2)[i];
+				lstr.v=temp;
+				curLocal.symbols[lstr.v.vname]=lstr;
+				}
+			}
+			 statement_list '}' {
+				$$ = new seq_astnode($4);
+				($$)->print(0);
+				($$)->declarations = $2;
+			}
 		;
 
 statement_list
@@ -264,6 +282,8 @@ statement
 		}
 		| RETURN expression ';'	{
 			($$)=new return_astnode($2);
+			if(gst.symbols[curFuncName].v.vtype.base.type == "void")
+				cerr<<"void functions can't have a return type"<<endl;
 		}
 		;
 
@@ -286,6 +306,10 @@ expression
 				($$)->valid=false;
 				($$)->lvalue=false;
 			}
+
+			// TODO: Unary typecheck
+
+
 		};
 
 logical_or_expression			// The usual hierarchy that starts here...
@@ -297,6 +321,8 @@ logical_or_expression			// The usual hierarchy that starts here...
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "OR");
+
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 	;
 logical_and_expression:
@@ -308,6 +334,7 @@ logical_and_expression:
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "AND");
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		;
 
@@ -319,13 +346,16 @@ equality_expression
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
-			($$)=new op_astnode2(args, "EQ_OP");	
+			($$)=new op_astnode2(args, "EQ_OP");
+
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		| equality_expression NE_OP relational_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "NE_OP");
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		;
 
@@ -338,24 +368,32 @@ relational_expression
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "LT");
+			binaryTypeCheck($1, $3);
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		| relational_expression '>' additive_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "GT");
+			binaryTypeCheck($1, $3);
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		| relational_expression LE_OP additive_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "LE_OP");
+			binaryTypeCheck($1, $3);
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		| relational_expression GE_OP additive_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "GE_OP");	
+			binaryTypeCheck($1, $3);
+			($$)->expType = type(baseType("int", 0), vector<int>(0));
 		}
 		;
 
@@ -369,12 +407,18 @@ additive_expression
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "PLUS");
+
+			binaryTypeCheck($1, $3);
+			($$)->expType = ($1)->expType;
 		}
 		| additive_expression '-' multiplicative_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "MINUS");
+
+			binaryTypeCheck($1, $3);
+			($$)->expType = ($1)->expType;
 		}
 		;
 
@@ -387,12 +431,16 @@ multiplicative_expression
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "MULT");
+			binaryTypeCheck($1, $3);
+			($$)->expType = ($1)->expType;
 		}
 		| multiplicative_expression '/' unary_expression {
 			exp_astnode* args[2];
 			args[0]=$1;
 			args[1]=$3;
 			($$)=new op_astnode2(args, "DIV");
+			binaryTypeCheck($1, $3);
+			($$)->expType = ($1)->expType;
 		}
 		;
 
@@ -411,12 +459,20 @@ postfix_expression
 	: primary_expression
 		| IDENTIFIER '(' ')' {
 			($$) = new funcall_astnode($1, std::vector<exp_astnode*>(0));
+			($$)->expType = gst.symbols[($1)].v.vtype;
 		}
 		| IDENTIFIER '(' expression_list ')' {
 			($$) = new funcall_astnode($1, $3);
+			($$)->expType = gst.symbols[($1)].v.vtype;
 		}
 		| postfix_expression '[' expression ']' {
 			($$) = new arrayref_astnode($1, $3);
+			type t = ($1).expType;
+			if(type.base.type != "int"){
+				cerr<<"Array index not integer"<<endl;
+			}
+			t = 
+			($$)->expType = ;
 		}
 		| postfix_expression '.' IDENTIFIER {
 			($$) = new member_astnode($1, new identifier_astnode($3)); 

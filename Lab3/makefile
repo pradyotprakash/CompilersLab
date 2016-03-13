@@ -1,6 +1,6 @@
 all: clean    Scanner.ih Scanner.h Scannerbase.h lex.cc parse.cc main.cc Parser.h Parserbase.h Parser.ih
 	g++ -g --std=c++0x lex.cc parse.cc main.cc -o parser
-	./parser < test.c > junk
+	./parser < test.cc > junk
 
         
 Scanner.ih: lex.l
@@ -16,7 +16,7 @@ parse.cc Parser.h Parserbase.h Parser.ih: parse.y
 	sed -i '\|typedef Meta__::SType STYPE__;| a \\tpublic: static STYPE__  d_val__; ' Parserbase.h;
 	sed -i '/include "Parser.ih"/a #include "ast.cpp"' parse.cc;
 	sed -i '\|void Parser::print__()| i Meta__::SType ParserBase::d_val__; ' parse.cc
-
+	#sed -i '\|typedef Meta__::SType STYPE__;| a \\tpublic: static int lineno;' Parserbase.h
 
 .PHONY: clean     
 clean:

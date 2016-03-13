@@ -1,13 +1,12 @@
-struct a{
-	int** b[4][5], *c[3];
-};
-
-struct d{
-	int e;
-	struct b* f;
-};
+#include <stdio.h>
+void f(){
+	return;
+}
 
 int main(){
-	struct a p;
-	x=1;
+
+	int ***b;
+	int **a[2];
+	b=a;
+	a=b;
 }

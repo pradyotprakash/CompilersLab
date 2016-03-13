@@ -31,7 +31,9 @@ public:
 	bool valid = true;
 	bool canBeIndex = false;
 	int expvalue=-1;
+	bool typeCasted=false;
 	virtual void print(int);
+	type expType;
 };
 
 class ref_astnode: public exp_astnode{

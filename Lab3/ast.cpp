@@ -4,6 +4,8 @@
 
 
 globalSymbolTable gst;
+string curFuncName;
+localSymbolTable curLocal;
 
 int getSize(variable v){
 	string type = v.vtype.base.type;
@@ -26,8 +28,67 @@ int getSize(variable v){
 		mul*=i;
 	}
 
-
 	return baseSize*mul;
+}
+
+bool isBasic(type t){
+	if(t.sizes.size() == 0 && t.base.pointers == 0 && t.base.type != "void")
+		return true;
+	return false;
+}
+
+void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
+	type t1 = e1->expType;
+	type t2 = e2->expType;
+
+	string s1 = t1.base.type;
+	string s2 = t2.base.type;
+
+	if(isBasic(t1) && isBasic(t2)){
+		
+		if(s1 == "string" && s2 != "string" ||
+			s2 == "string" && s1 != "string")
+			cerr<<"Incompatible types\n";
+		else if(s1 == "float" && s2 == "int"){
+			e2->expType.base.type = "float";
+			e2->typeCasted = true;
+		}
+		else if(s1 == "int" && s2 == "float"){
+			e1->expType.base.type = "float";
+			e1->typeCasted = true;
+		}
+		return;
+	}
+
+	else{
+		// if((t1.base.type=="void" || s1 == s2) && 
+		// 	t1.base.pointers==1+ && t1.sizes.size()==0
+		// 	t2.base.pointers==1 && t2.base.type!="void" && ){
+		// 		e2->typeCasted=true;
+		// 		e2->expType=e1->expType;
+		// 	}
+		// }
+		// int x = t1.base.pointers + t1.sizes.size();
+		// int y = t2.base.pointers + t2.sizes.size();
+		// if((s1 == "void" || s1 == s2) &&  x == y && )
+	}
+
+}
+
+
+void unaryTypeCheck(type t1, exp_astnode* e){
+	type t2 = e->expType;
+
+	if(isBasic(t1) && isBasic(t2)){
+		if(t1.base.type == "string" && t2.base.type != "string" ||
+			t2.base.type == "string" && t1.base.type != "string"){
+			cerr<<"Return type mismatch\n";
+		}
+		else{
+			e->expType = t1;	
+		}
+		return;
+	}
 }
 
 void stmt_astnode::print(int l){
