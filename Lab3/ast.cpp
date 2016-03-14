@@ -1,8 +1,6 @@
 #include "ast.h"
 #ifndef ASTCPP
 
-
-
 globalSymbolTable gst;
 string curFuncName;
 localSymbolTable curLocal;
@@ -14,6 +12,7 @@ int getSize(variable v){
 	if(type == "int") baseSize=4;
 	else if(type == "float") baseSize=4;
 	else if(type == "void") baseSize=0;
+	else if(v.vtype.base.pointers!=0) baseSize=4;
 	else if(type[0]=='s'){
 		int sum = 0;
 		localSymbolTable lst = gst.symboltables[type];
@@ -23,7 +22,6 @@ int getSize(variable v){
 		}
 		baseSize=sum;
 	}
-	if(v.vtype.base.pointers!=0) baseSize=4;
 	int mul = 1;
 	for(auto i: v.vtype.sizes){
 		mul*=i;
@@ -40,6 +38,7 @@ bool isBasic(type t){
 
 void showError(string s, int lineno=-1){
 	cerr<<lineno<<": "<<s<<endl;
+	exit(0);
 }
 
 void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
@@ -96,6 +95,7 @@ void unaryTypeCheck(type t1, exp_astnode* e){
 		}
 		return;
 	}
+	if(e->expType.base.type=="void") showError("Incompatible type!");
 }
 
 void stmt_astnode::print(int l){

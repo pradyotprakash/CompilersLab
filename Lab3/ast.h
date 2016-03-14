@@ -28,7 +28,6 @@ public:
 class exp_astnode: public abstract_astnode{
 public:
 	bool lvalue = false;
-	bool valid = true;
 	bool canBeIndex = false;
 	int expvalue=-1;
 	bool typeCasted=false;

@@ -1,6 +1,7 @@
 %%
 
 [ \t] 			// skip
+
 void 			return Parser::VOID;
 int				return Parser::INT;
 float 			return Parser::FLOAT;
@@ -19,6 +20,8 @@ while			return Parser::WHILE;
 for				return Parser::FOR;
 struct 			return Parser::STRUCT;
 "->"			return Parser::PTR_OP;
+
+"//".*"\n"	// skip
 
 "/*"[^*]*(\*([^/*][^*]*)?)*"*/" // skip return Parser::COMMENT;
 

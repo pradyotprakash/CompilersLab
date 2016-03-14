@@ -24,25 +24,23 @@
 %%
 
 // TODO
-// 1) +, < for int and float
-// 2) typecasting = and to function parameters
-// 3) compatibility of two types
-// 4) return type of body of statements
-// 5) give types to each expression
-// 6) pointer, array, references weirdness
-// 7) errors!
+// 1) +, < for int and float, and have type-casting in ast
+// 2) unaryTypeCheck, binaryTypeCheck
+// 3) line numbers
+// 4) pointer and array declaration, usage
+// 5) pointer, array, references weirdness
+
 
 
 translation_unit 
 		:  struct_specifier
  		| function_definition {
- 			// cout<<"--------------"<<endl;
- 			// gst.print();
+ 			cout<<"--------------"<<endl;
+ 			gst.print();
  		}
 	 	| translation_unit function_definition {
-	 		// cout<<"------------"<<endl;
-	 		// gst.print();
-	 		// cout<<d__lineNr<<endl;
+	 		cout<<"------------"<<endl;
+	 		gst.print();
 	 	}
 		| translation_unit struct_specifier
 		;
@@ -55,6 +53,9 @@ struct_specifier
 			for(unsigned int i=0;i<($4).size();++i){
 				localSymbolTableRow lstr;
 				variable temp = ($4)[i];
+				if(isBasic(temp.vtype) && temp.vtype.base.type=="struct "+$2){
+					showError("Declaring struct as member of itself");
+				}
 				temp.offset=offset;
 				temp.size=getSize(temp); 
 				offset+=temp.size;
@@ -75,8 +76,7 @@ function_definition
 			($2).v.vtype.base.type = ($1).type;
 			gst.symbols[($2).v.vname]=($2);
 		} 
-		compound_statement {
-		
+		compound_statement {	
 			localSymbolTable lst;
 			lst.symbols.clear();
 			int offset=0;
@@ -91,7 +91,6 @@ function_definition
 				lstr.v=temp;
 				lst.symbols[lstr.v.vname]=lstr;
 			}
-
 			for(unsigned int i = 0; i<($4)->declarations.size(); i++){
 				localSymbolTableRow lstr;
 				variable temp = ($4)->declarations[i];
@@ -103,6 +102,7 @@ function_definition
 			}
 			gst.symboltables["function "+($2).v.vname]=lst;
 			// TODO assign $$?
+
 		}
 		;
 
@@ -196,7 +196,7 @@ declarator
 	}
 	| declarator '[' primary_expression']' {
 		if(!($3)->canBeIndex){
-			cerr<<"Only integers allowed!\n";
+			showError("Array dimensions must be intconstants");
 		}
 		else
 			($1).vtype.sizes.push_back(($3)->expvalue);
@@ -210,11 +210,13 @@ declarator
 
 primary_expression
 		: IDENTIFIER {
-			$$ = new identifier_astnode($1);
+			identifier_astnode* temp = new identifier_astnode($1);
 			if(curLocal.symbols.find($1)==curLocal.symbols.end()){
 				showError("Variable not declared before");
 			}
-			else ($$)->expType = curLocal.symbols[($1)].v.vtype;
+			else temp->expType = curLocal.symbols[($1)].v.vtype;
+			temp->lvalue=true;
+			($$)=temp;
 		}
 		| INT_CONSTANT {
 			$$ = new intconst_astnode($1);
@@ -240,8 +242,20 @@ compound_statement
 			$$ = new seq_astnode(std::vector<stmt_astnode*>(1, new empty_astnode()));
 			($$)->print(0);
 		}
-		| '{' statement_list '}' {
-			$$ = new seq_astnode($2);
+		| '{' {
+			for(variable v: gst.symbols[curFuncName].args){
+					localSymbolTableRow lstr;
+					variable temp = v;
+					lstr.v=temp;
+					if(curLocal.symbols.find(lstr.v.vname) != curLocal.symbols.end()){
+						showError("Variable redeclaration");
+					}
+					else curLocal.symbols[lstr.v.vname]=lstr;
+				}
+
+			}
+			statement_list '}' {
+			$$ = new seq_astnode($3);
 			($$)->print(0);
 		}
 		| '{' declaration_list {
@@ -252,7 +266,14 @@ compound_statement
 					if(curLocal.symbols.find(lstr.v.vname) != curLocal.symbols.end()){
 						showError("Variable redeclaration");
 					}
-					else curLocal.symbols[lstr.v.vname]=lstr;
+					else{
+						if(temp.vtype.base.type[0] == 's'){
+							if(gst.symboltables.find(temp.vtype.base.type) == gst.symboltables.end()){
+								showError("struct definition does not exist", -1);
+							}
+						}
+						curLocal.symbols[lstr.v.vname]=lstr;
+					}
 				}
 				for(unsigned int i = 0; i<($2).size(); i++){
 					localSymbolTableRow lstr;
@@ -261,13 +282,21 @@ compound_statement
 					if(curLocal.symbols.find(lstr.v.vname) != curLocal.symbols.end()){
 						showError("Variable redeclaration");
 					}
-					else curLocal.symbols[lstr.v.vname]=lstr;
+					else{
+						if(temp.vtype.base.type[0] == 's'){
+							if(gst.symboltables.find(temp.vtype.base.type) == gst.symboltables.end()){
+								showError("struct definition does not exist", -1);
+							}
+						}
+						curLocal.symbols[lstr.v.vname]=lstr;
+					}
 				}
 			}
 			statement_list '}' {
-				$$ = new seq_astnode($4);
-				($$)->print(0);
-				($$)->declarations = $2;
+				auto temp = new seq_astnode($4);
+				temp->print(0);
+				temp->declarations = $2;
+				($$)=temp;
 			}
 		;
 
@@ -318,11 +347,11 @@ expression
 		|  unary_expression '=' expression {
 			// TODO: Unary typecheck
 			unaryTypeCheck(($1)->expType, $3);
-			$$ = new assign_exp_astnode($1, $3);
-			if(!($1)->valid || !($1)->lvalue){
-				($$)->valid=false;
-				($$)->lvalue=false;
+			if(!($1)->lvalue){
+				showError("Cannot assign a value to a non-lvalue");	
 			}
+			$$ = new assign_exp_astnode($1, $3);
+			
 		};
 
 logical_or_expression			// The usual hierarchy that starts here...
@@ -461,10 +490,22 @@ unary_expression
 			($$)=$1;
 		}
 		| unary_operator postfix_expression {
-			($$)=new op_astnode1($2, $1);
-			$$->lvalue = $2->lvalue;
-			$$->valid = $2->valid;
-			($$)->expType = ($2)->expType;
+			auto temp=new op_astnode1($2, $1);
+			temp->expType = ($2)->expType;
+			if(($1)=="ADDRESSOF"){
+				temp->expType.base.pointers++;
+				if(!($2)->lvalue){
+					showError("Cannot take adress of nonlvalue");
+				}
+			}
+			if(($1)=="DEREF"){
+				temp->expType.base.pointers--;
+				if(temp->expType.base.pointers < 0){
+					showError("Dereferencing non pointer type");
+				}
+				temp->lvalue=true;
+			}
+			($$)=temp;
 		}
 		;
 
@@ -474,13 +515,19 @@ postfix_expression
 		}
 		| IDENTIFIER '(' ')' {
 			($$) = new funcall_astnode($1, std::vector<exp_astnode*>(0));
+			if(gst.symbols.find($1)==gst.symbols.end()){
+				showError("Function not defined");
+			}
 			($$)->expType = gst.symbols[($1)].v.vtype;
-			if(parameterTypes.size()!=0){
-					showError("Incorrect number of arguments");
+			if(gst.symbols[($1)].args.size()!=0){
+				showError("Incorrect number of arguments");
 			}
 		}
 		| IDENTIFIER '(' {
 				parameterTypes.clear();
+				if(gst.symbols.find($1)==gst.symbols.end()){
+					showError("Function not defined");
+				}
 				for(auto x: gst.symbols[($1)].args){
 					parameterTypes.push_back(x.vtype);
 				}
@@ -491,16 +538,15 @@ postfix_expression
 				if(parameterTypes.size()!=0){
 					showError("Incorrect number of arguments");
 				}
-				
-
-		}
+			}
 		| postfix_expression '[' expression ']' {
 			($$) = new arrayref_astnode($1, $3);
 			type t = ($3)->expType;
+			($1)->expType.print();
 			if(t.base.type != "int"){
 				showError("Array index not integer", 0);
 			}
-
+			($1)->expType.print();
 			if(($1)->expType.sizes.size()==0){
 				showError("[ ] operator not defined", -1);
 			}
@@ -508,6 +554,7 @@ postfix_expression
 				($1)->expType.sizes.erase(($1)->expType.sizes.begin());
 			}
 			($$)->expType = ($1)->expType;
+			($$)->lvalue=true;
 		}
 		| postfix_expression '.' IDENTIFIER {
 			type b;
@@ -528,6 +575,7 @@ postfix_expression
 			($$) = new member_astnode($1, new identifier_astnode($3));
 			if(b.base.type!="")
 				($$)->expType=b;
+			($$)->lvalue=true;
 		}
 		| postfix_expression PTR_OP IDENTIFIER {
 			type b;
@@ -548,14 +596,23 @@ postfix_expression
 				}
 				else b=lst.symbols[$3].v.vtype;
 			}
-			($$) = new member_astnode($1, new identifier_astnode($3));
+			($$) = new arrow_astnode($1, new identifier_astnode($3));
 			if(b.base.type!="")
 				($$)->expType=b;	
-			($$) = new arrow_astnode($1, new identifier_astnode($3));
+			($$)->lvalue=true;
 		}
 		| postfix_expression INC_OP {
-			($$) = new op_astnode1($1, "PP");
-			($$)->expType = ($1)->expType;
+			op_astnode1* temp = new op_astnode1($1, "PP");
+			temp->expType = ($1)->expType;
+			temp->lvalue=false;
+			if(!($1)->lvalue){
+				showError("Can't perform ++ on non-lvalue");
+			}
+			if(!isBasic(temp->expType) ){
+				showError("Can't perform ++ on not numeric type");
+			}
+			($$)=temp;
+			
 		}
 	;
 
@@ -607,8 +664,6 @@ selection_statement
 		}
 		;
 
-
-
 iteration_statement
 		: WHILE '(' expression ')' statement {
 			($$) = new while_astnode($3, $5);
@@ -637,6 +692,8 @@ declaration_list
 
 declaration
 	: type_specifier declarator_list';' {
+		if(($1).type == "void" && ($1).pointers == 0)
+			showError("variable can't be of type void");
 		for(int i=0;i<($2).size();++i){
 			($2)[i].vtype.base.type = ($1).type;
 		}
