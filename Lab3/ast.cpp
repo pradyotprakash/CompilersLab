@@ -5,6 +5,8 @@ globalSymbolTable gst;
 string curFuncName;
 localSymbolTable curLocal;
 vector<type> parameterTypes;
+string curStruct;
+bool hasReturn;
 
 int getSize(variable v){
 	string type = v.vtype.base.type;
@@ -36,8 +38,8 @@ bool isBasic(type t){
 	return false;
 }
 
-void showError(string s, int lineno=-1){
-	cerr<<lineno<<": "<<s<<endl;
+void showError(string s, int lineNumber = -1){
+	cerr<<"Error in line number: "<<lineno<<": "<<s<<endl;
 	exit(0);
 }
 

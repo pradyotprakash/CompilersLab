@@ -1,0 +1,6 @@
+h AST Starts Now:
+(Block [(Ass (Id "t")  (MULT-INT (Id "y") (Id "y") ) )
+(Return (Id "t") ) ])
+f AST Starts Now:
+(Block [(Return (PP (Id "s") ) ) ])
+main AST Starts Now:

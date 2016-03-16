@@ -24,11 +24,9 @@
 %%
 
 // TODO
-// 1) +, < for int and float, and have type-casting in ast
-// 2) unaryTypeCheck, binaryTypeCheck
-// 3) line numbers
-// 4) pointer and array declaration, usage
-// 5) pointer, array, references weirdness
+// 1) unaryTypeCheck, binaryTypeCheck
+// 2) pointer and array declaration, usage
+// 3) pointer, array, references weirdness
 
 
 
@@ -46,25 +44,28 @@ translation_unit
 		;
 
 struct_specifier 
-		: STRUCT IDENTIFIER '{' declaration_list '}' ';' {
+		: STRUCT IDENTIFIER '{' {curStruct = "struct "+($2);} declaration_list '}' ';' {
 			localSymbolTable lst;
 			lst.symbols.clear();
 			int offset = 0;
-			for(unsigned int i=0;i<($4).size();++i){
+			for(unsigned int i=0;i<($5).size();++i){
 				localSymbolTableRow lstr;
-				variable temp = ($4)[i];
-				if(isBasic(temp.vtype) && temp.vtype.base.type=="struct "+$2){
-					showError("Declaring struct as member of itself");
-				}
+				variable temp = ($5)[i];
+				// if(isBasic(temp.vtype) && temp.vtype.base.type=="struct "+$2){
+				// 	showError("Declaring struct as member of itself");
+				// }
 				temp.offset=offset;
 				temp.size=getSize(temp); 
 				offset+=temp.size;
 				lstr.v = temp;
 				lst.symbols[lstr.v.vname] = lstr;
 			}
-			gst.symboltables["struct "+$2]=lst;
+			string sname = "struct "+$2;
+			if(gst.symboltables.find(sname)!=gst.symboltables.end())
+				showError("Struct redeclaration");
+			gst.symboltables[sname]=lst;
+			curStruct = "";
 			// TODO assign $$?
-
 		}
 		;
 
@@ -77,12 +78,17 @@ function_definition
 			gst.symbols[($2).v.vname]=($2);
 
 			cout<<curFuncName<<" AST Starts Now:"<<endl;
+			hasReturn=false;
 		} 
 		compound_statement {	
 			localSymbolTable lst;
 			lst.symbols.clear();
 			int offset=0;
 			
+			if(($1).type!="void" && !hasReturn){
+				showError("Non-void function does not have return statement");
+			}
+
 			vector<variable> args = gst.symbols[($2).v.vname].args;
 			for(unsigned int i = 0; i<args.size(); i++){
 				localSymbolTableRow lstr;
@@ -102,9 +108,14 @@ function_definition
 				lstr.v=temp;
 				lst.symbols[lstr.v.vname]=lstr;
 			}
-			gst.symboltables["function "+($2).v.vname]=lst;
-			// TODO assign $$?
+			string fname = "function "+($2).v.vname;
+			if(!(gst.symboltables.find(fname)==gst.symboltables.end())){
+				showError("Function redefinition");
+			}
+			gst.symboltables[fname]=lst;
 
+
+			// TODO assign $$?
 		}
 		;
 
@@ -332,6 +343,7 @@ statement
 			($$)=$1;
 		}
 		| RETURN expression ';'	{
+			hasReturn=true;
 			auto temp=new return_astnode($2);
 			if(gst.symbols[curFuncName].v.vtype.base.type == "void")
 				showError("void functions can't have a return type", -1);
@@ -717,6 +729,19 @@ declaration
 	: type_specifier declarator_list';' {
 		if(($1).type == "void" && ($1).pointers == 0)
 			showError("variable can't be of type void");
+		// if(($1).type[0]=='s' && gst.symboltables.find(($1).type)==gst.symboltables.end()){
+		// 	cerr<<($1).type<<endl;
+		// 	showError("struct has not been declared");
+		// }
+		type temp(($1), vector<int>(0));
+		if(($1).type==curStruct){
+			for(auto v: ($2)){
+				if(v.vtype.base.pointers==0)
+					showError("Declaring struct as member of itself");
+			}
+			
+		}
+				
 		for(int i=0;i<($2).size();++i){
 			($2)[i].vtype.base.type = ($1).type;
 		}
