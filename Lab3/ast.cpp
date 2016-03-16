@@ -57,15 +57,15 @@ bool operator == (const type& t1, const type& t2){
 void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 	type t1 = e1->expType;
 	type t2 = e2->expType;
-
-	if(t1==t2) return;
-
+		
 	string s1 = t1.base.type;
 	string s2 = t2.base.type;
-
 	if(isBasic(t1) && isBasic(t2)){
 		if(s1 == "string" && s2 != "string" || s2 == "string" && s1 != "string")
 			showError("Incompatible types", -1);
+		if(s1[0]=='s' || s2[0]=='s'){
+			showError("Cannot operate on struct types");
+		}
 		if(s1 == "float" && s2 == "int"){
 			e2->expType.base.type = "float";
 			e2->typeCasted = true;
@@ -77,11 +77,15 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 		return;
 	}
 
-	if(t2.base.type == "void" && t1.base.type != "void")
-		showError("Can't cast non-void to void type");
+	if(t1.sizes.size() == 0 && t2.sizes.size() == 0 && t1.base.pointers == 1 && t2.base.pointers == 1){
+		if(t1.base.type == "void" || t2.base.type == "void")
+			return;
+	}
 
 	// array type check
 	if(t1.base.pointers ==  t2.base.pointers && t1.sizes.size() == t2.sizes.size()){
+		if(t1.base.type != t2.base.type)
+			showError("Incompatible types");
 		for(int i=1;i<t1.sizes.size();++i){
 			if(t1.sizes[i] != t2.sizes[i]){
 				showError("Incompatible types!");
@@ -90,12 +94,12 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 		return;
 	}
 	
-	if(!(t1.sizes.size() == 0 && t1.base.pointers == 1+t2.base.pointers && t2.sizes.size() == 1)){
+	if(!(t1.sizes.size() == 0 && t1.base.pointers == 1+t2.base.pointers && t2.sizes.size() == 1) || t1.base.type != t2.base.type){
 		showError("Incompatible array types!");
 		return;
 	}
 
-	if(!(t2.sizes.size() == 0 && t2.base.pointers == 1+t1.base.pointers && t1.sizes.size() == 1)){
+	if(!(t2.sizes.size() == 0 && t2.base.pointers == 1+t1.base.pointers && t1.sizes.size() == 1) || t1.base.type != t2.base.type){
 		showError("Incompatible array types!");
 		return;
 	}

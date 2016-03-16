@@ -64,6 +64,7 @@ struct_specifier
 				showError("Struct redeclaration");
 			gst.symboltables[sname]=lst;
 			curStruct = "";
+			gst.structsDefined.insert(sname);
 			// TODO assign $$?
 		}
 		;
@@ -487,6 +488,12 @@ additive_expression
 			binaryTypeCheck($1, $3);
 			auto temp=new op_astnode2(args, "PLUS");
 			temp->expType = ($1)->expType;
+			if(!isBasic(temp->expType)){
+				showError("Cannot operate on non-numberic types");
+			}
+			if(temp->expType.base.type!="int" && temp->expType.base.type!="float"){
+				showError("Cannot operate on non-numberic types");
+			}
 			($$)=temp;
 		}
 		| additive_expression '-' multiplicative_expression {
@@ -496,6 +503,12 @@ additive_expression
 			auto temp=new op_astnode2(args, "MINUS");
 			binaryTypeCheck($1, $3);
 			temp->expType = ($1)->expType;
+			if(!isBasic(temp->expType)){
+				showError("Cannot operate on non-numberic types");
+			}
+			if(temp->expType.base.type!="int" && temp->expType.base.type!="float"){
+				showError("Cannot operate on non-numberic types");
+			}
 			($$)=temp;
 		}
 		;
@@ -511,6 +524,12 @@ multiplicative_expression
 			auto temp=new op_astnode2(args, "MULT");
 			binaryTypeCheck($1, $3);
 			temp->expType = ($1)->expType;
+			if(!isBasic(temp->expType)){
+				showError("Cannot operate on non-numberic types");
+			}
+			if(temp->expType.base.type!="int" && temp->expType.base.type!="float"){
+				showError("Cannot operate on non-numberic types");
+			}
 			($$)=temp;
 		}
 		| multiplicative_expression '/' unary_expression {
@@ -520,6 +539,12 @@ multiplicative_expression
 			auto temp=new op_astnode2(args, "DIV");
 			binaryTypeCheck($1, $3);
 			temp->expType = ($1)->expType;
+			if(!isBasic(temp->expType)){
+				showError("Cannot operate on non-numberic types");
+			}
+			if(temp->expType.base.type!="int" && temp->expType.base.type!="float"){
+				showError("Cannot operate on non-numberic types");
+			}
 			($$)=temp;
 		}
 		;

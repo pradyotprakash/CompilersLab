@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <set>
 
 using namespace std;
 
@@ -22,7 +23,10 @@ public:
 	baseType(){}
 
 	void print(){
-	 	cout<<"Type: "<<type<<" pointers: "<<pointers<<" ";
+	 	cout<<type<<" ";
+	 	for(int i=0; i<pointers; i++)
+	 		cout<<"*";
+	 	cout<<" ";
 	}
 };
 
@@ -39,8 +43,9 @@ public:
 	type(){}
 
 	void print(){
-		cout<<"Base: ";base.print();cout<<" Arrays: ";
-		for(auto i: sizes) cout<<i<<" ";
+		base.print();
+		for(auto i: sizes) cout<<"["<<i<<"]";
+		cout<<" ";
 	}
 };
 
@@ -60,7 +65,10 @@ public:
 
 	variable(){}
 	void print(){
-		cout<<vname<<" ";vtype.print();cout<<" offset: "<<offset<<" size: "<<size<<" ";
+		cout<<"("<<vname<<") (";vtype.print();cout<<")";
+		if(size!=0){
+			cout<<" offset: ("<<offset<<") size: ("<<size<<") ";
+		}
 	}
 };
 
@@ -71,8 +79,12 @@ public:
 	std::vector<variable> args;
 
 	void print(){
-		cout<<isFunction<<" ";v.print();
-		for(auto v:args) v.print();
+		cout<<"Function ";
+		v.print();
+		for(auto v:args){
+			cout<<" | ";
+			v.print();
+		}
 	}
 
 };
@@ -83,6 +95,7 @@ public:
 	variable v;
 	void print(){
 		v.print();
+		cout<<endl;
 	}
 };
 
@@ -90,7 +103,13 @@ class localSymbolTable{
 public:
 	map<std::string, localSymbolTableRow> symbols;
 	void print(){
-		for(auto v: symbols){
+
+		map<int, localSymbolTableRow> temp;
+		for(auto v:symbols){
+			temp[v.second.v.offset]=v.second;
+		}
+
+		for(auto v: temp){
 			v.second.print();
 		}
 	}
@@ -99,18 +118,27 @@ public:
 class globalSymbolTable{
 public:
 	map<string, globalSymbolTableRow> symbols;
+	set<string> structsDefined;
 	map<std::string, localSymbolTable> symboltables; // should be used for structs and function bodies
 	void print(){
+
 		cout<<"Global symbol table:"<<endl;
+		cout<<"--------------------"<<endl;
+		cout<<"Format: name returnType arguments"<<endl;
 		for(auto s: symbols){
 			s.second.print();
 			cout<<endl;
 		}
-		cout<<"Second level symbol tables:"<<endl;
+		for(auto s: structsDefined){
+			cout<<s<<endl;
+		}
+		cout<<"\n\n\n";
+		cout<<"Other symbol tables:"<<endl;
+		cout<<"--------------------"<<endl;
 		for(auto s:symboltables){
-			cout<<s.first<<" symbol table now"<<endl;
+			cout<<s.first<<" symbol table:\n"<<endl;
 			s.second.print();
-			cout<<endl;
+			cout<<"\n\n\n";
 		}
 	}
 };
