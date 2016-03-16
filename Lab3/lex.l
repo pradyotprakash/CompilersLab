@@ -1,5 +1,6 @@
 %%
 
+"\n"			Parser::lineno++;
 [ \t] 			// skip
 
 void 			return Parser::VOID;
@@ -21,7 +22,7 @@ for				return Parser::FOR;
 struct 			return Parser::STRUCT;
 "->"			return Parser::PTR_OP;
 
-"//".*"\n"	// skip
+"//".*"\n"	    Parser::lineno++;
 
 "/*"[^*]*(\*([^/*][^*]*)?)*"*/" // skip return Parser::COMMENT;
 

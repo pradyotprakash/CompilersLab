@@ -49,19 +49,21 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 	string s2 = t2.base.type;
 
 	if(isBasic(t1) && isBasic(t2)){
-		
 		if(s1 == "string" && s2 != "string" ||
 			s2 == "string" && s1 != "string")
 			showError("Incompatible types", -1);
-		else if(s1 == "float" && s2 == "int"){
+		if(s1 == "float" && s2 == "int"){
 			e2->expType.base.type = "float";
 			e2->typeCasted = true;
+			// return e2->expType;
 		}
-		else if(s1 == "int" && s2 == "float"){
+		if(s1 == "int" && s2 == "float"){
 			e1->expType.base.type = "float";
 			e1->typeCasted = true;
+			// return e1->expType;
 		}
 		return;
+		// return type();
 	}
 
 	else{
@@ -133,34 +135,14 @@ void seq_astnode::print(int l){
 	std::cout<<"])\n";
 }
 
-// assign_astnode::assign_astnode(ref_astnode* n1, exp_astnode* n2){
-//     l = n1;
-//     r = n2;
-// }
-
-// void assign_astnode::print(int l){
-// 	for(int i=0;i<l;++i)
-// 		cout<<' ';
-// 	std::cout<<"(Ass ";
-// 	this->l->print(0);
-// 	std::cout<<" ";
-// 	r->print(0);
-// 	std::cout<<")\n";
-// }
-
 assign_stmt_astnode::assign_stmt_astnode(exp_astnode* n2){
-    // l = n1;
     r = n2;
 }
 
 void assign_stmt_astnode::print(int l){
-	// for(int i=0;i<l;++i)
-	// 	cout<<' ';
-	// std::cout<<"(Ass ";
-	// this->l->print(0);
-	// std::cout<<" ";
-	// r->print(0);
-	// std::cout<<")\n";
+	for(int i=0;i<l;++i)
+		cout<<' ';
+	this->r->print(0);
 }
 
 assign_exp_astnode::assign_exp_astnode(exp_astnode* n1, exp_astnode* n2){
@@ -169,13 +151,13 @@ assign_exp_astnode::assign_exp_astnode(exp_astnode* n1, exp_astnode* n2){
 }
 
 void assign_exp_astnode::print(int l){
-	// for(int i=0;i<l;++i)
-	// 	cout<<' ';
-	// std::cout<<"(Ass ";
-	// this->l->print(0);
-	// std::cout<<" ";
-	// r->print(0);
-	// std::cout<<")\n";
+	for(int i=0;i<l;++i)
+		cout<<' ';
+	std::cout<<"(Ass ";
+	this->l->print(0);
+	std::cout<<" ";
+	r->print(0);
+	std::cout<<")\n";
 }
 
 return_astnode::return_astnode(exp_astnode* n){
@@ -251,9 +233,26 @@ op_astnode2::op_astnode2(exp_astnode** n1, std::string n2){
 void op_astnode2::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
-	std::cout<<"("<<op<<" ";
+	bool toCast = true;
+	if(op=="OR" || op=="AND")
+		toCast=false;
+	std::cout<<"("<<op;
+	if(nodes[0]->expType.base.type == "int" && toCast)
+		std::cout<<"-INT ";
+	if(nodes[0]->expType.base.type == "float" && toCast)
+		std::cout<<"-FLOAT ";
+	
+	if(nodes[0]->typeCasted && toCast)
+		cout<<"(to_" + nodes[0]->expType.base.type;
 	nodes[0]->print(0);
+	if(nodes[0]->typeCasted && toCast)
+		cout<<") ";
+	
+	if(nodes[1]->typeCasted && toCast)
+		cout<<"(to_" + nodes[1]->expType.base.type;
 	nodes[1]->print(0);
+	if(nodes[1]->typeCasted && toCast)
+		cout<<") ";
 	std::cout<<") ";
 }
 
@@ -278,11 +277,11 @@ funcall_astnode::funcall_astnode(std::string n1, std::vector<exp_astnode*> n2){
 void funcall_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
-	std::cout<<"( "<<funcName<<" ";
+	std::cout<<"( "<<funcName<<" (";
 	for(int i=0;i<nodes.size();++i){
 		nodes[i]->print(0);	
 	}
-	std::cout<<") ";
+	std::cout<<") ) ";
 }
 
 floatconst_astnode::floatconst_astnode(float n){

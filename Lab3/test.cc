@@ -1,8 +1,21 @@
-int returnInt () {
-    return 1;
+struct a{
+    int a, b;
+    float c, d;
+};
+
+int f(){
+    int s;
+    return s++;
+}
+
+int h(int y){
+    int t;
+    t = y*y;
+    return t;
 }
 
 int main() {
-    int c[3];
-    c[returnInt()] = 1;
+    struct a x;
+    float y;
+    x.a = (x.a < x.d) && x.c;
 }
