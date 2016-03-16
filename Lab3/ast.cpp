@@ -43,6 +43,10 @@ void showError(string s, int lineNumber = -1){
 	exit(0);
 }
 
+void showWarning(string s, int lineNumber = -1){
+	cerr<<"Warning in line number: "<<lineno<<": "<<s<<endl;
+}
+
 bool operator == (const type& t1, const type& t2){
 	if(t1.sizes!=t2.sizes) return false;
 	if(t1.base.type!=t2.base.type) return false;
@@ -73,37 +77,69 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 		return;
 	}
 
-	// one of them is not basic
-	if(s1 == "void" || s2 == "void")
-		showError("Cannot operate on void types");
-	return;
+	if(t2.base.type == "void" && t1.base.type != "void")
+		showError("Can't cast non-void to void type");
 
-	// else{
-	// 	// if((t1.base.type=="void" || s1 == s2) && 
-	// 	// 	t1.base.pointers==1+ && t1.sizes.size()==0
-	// 	// 	t2.base.pointers==1 && t2.base.type!="void" && ){
-	// 	// 		e2->typeCasted=true;
-	// 	// 		e2->expType=e1->expType;
-	// 	// 	}
-	// 	// }
-	// 	// int x = t1.base.pointers + t1.sizes.size();
-	// 	// int y = t2.base.pointers + t2.sizes.size();
-	// 	// if((s1 == "void" || s1 == s2) &&  x == y && )
-	// }
+	// array type check
+	if(t1.base.pointers ==  t2.base.pointers && t1.sizes.size() == t2.sizes.size()){
+		for(int i=1;i<t1.sizes.size();++i){
+			if(t1.sizes[i] != t2.sizes[i]){
+				showError("Incompatible types!");
+			}
+		}
+		return;
+	}
+	
+	if(!(t1.sizes.size() == 0 && t1.base.pointers == 1+t2.base.pointers && t2.sizes.size() == 1)){
+		showError("Incompatible array types!");
+		return;
+	}
 
+	if(!(t2.sizes.size() == 0 && t2.base.pointers == 1+t1.base.pointers && t1.sizes.size() == 1)){
+		showError("Incompatible array types!");
+		return;
+	}
 }
 
 void unaryTypeCheck(type t1, exp_astnode* e){
 	type t2 = e->expType;
-	cerr<<t1.base.type<<" "<<e->expType.base.type<<endl;
+	// cerr<<t1.base.type<<" "<<e->expType.base.type<<endl;
 	if(isBasic(t1) && isBasic(t2)){
 		if(t1.base.type == "string" && t2.base.type != "string" ||
 			t2.base.type == "string" && t1.base.type != "string"){
 			showError("Incompatible types!", -1);
 		}
 		if(t2==t1) return;
+		if(t1.base.type[0]=='s' || t2.base.type[0]=='s')
+			showError("Incompatible types!");
 		e->expType = t1;
 		e->typeCasted=true;
+		
+		return;
+	}
+
+	if(t1.sizes.size() == 0 && t2.sizes.size() == 0 && t1.base.pointers == 1 && t2.base.pointers == 1){
+		if(t1.base.type == "void" || t2.base.type == "void")
+			return;
+	}
+
+	// if(t2.base.type == "void" && t1.base.type != "void")
+		// showError("Can't cast void to non-void type");
+
+	// array type check
+	if(t1.base.pointers ==  t2.base.pointers && t1.sizes.size() == t2.sizes.size()){
+		if(t1.base.type != t2.base.type)
+			showError("Incompatible types");
+		for(int i=1;i<t1.sizes.size();++i){
+			if(t1.sizes[i] != t2.sizes[i]){
+				showError("Incompatible types!");
+			}
+		}
+		return;
+	}
+	
+	if(!(t1.sizes.size() == 0 && t1.base.pointers == 1+t2.base.pointers && t2.sizes.size() == 1) || t1.base.type != t2.base.type){
+		showError("Incompatible array types!");
 		return;
 	}
 

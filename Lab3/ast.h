@@ -31,6 +31,7 @@ public:
 	bool canBeIndex = false;
 	int expvalue=-1;
 	bool typeCasted=false;
+	bool isLocal=false, isAddress=false;
 	virtual void print(int);
 	type expType;
 };

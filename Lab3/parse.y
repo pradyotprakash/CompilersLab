@@ -85,7 +85,7 @@ function_definition
 			int offset=0;
 			
 			if(($1).type!="void" && !hasReturn){
-				showError("Non-void function does not have return statement");
+				showWarning("Non-void function does not have return statement");
 			}
 
 			vector<variable> args = gst.symbols[($2).v.vname].args;
@@ -228,6 +228,7 @@ primary_expression
 			}
 			else temp->expType = curLocal.symbols[($1)].v.vtype;
 			temp->lvalue=true;
+			temp->isLocal=true;
 			($$)=temp;
 		}
 		| INT_CONSTANT {
@@ -256,6 +257,7 @@ compound_statement
 		: '{' '}' {
 			auto temp = new seq_astnode(std::vector<stmt_astnode*>(1, new empty_astnode()));
 			temp->print(0);
+			cout<<"\n\n\n";
 			($$)=temp;
 		}
 		| '{' {
@@ -273,6 +275,7 @@ compound_statement
 			statement_list '}' {
 			auto temp = new seq_astnode($3);
 			temp->print(0);
+			cout<<"\n\n\n";
 			($$)=temp;
 		}
 		| '{' declaration_list {
@@ -312,6 +315,7 @@ compound_statement
 			statement_list '}' {
 				auto temp = new seq_astnode($4);
 				temp->print(0);
+				cout<<"\n\n\n";
 				temp->declarations = $2;
 				($$)=temp;
 			}
@@ -342,6 +346,9 @@ statement
 			($$)=$1;
 		}
 		| RETURN expression ';'	{
+			if(($2)->isAddress){
+				showError("Can't return reference to a local variable");
+			}
 			hasReturn=true;
 			auto temp=new return_astnode($2);
 			if(gst.symbols[curFuncName].v.vtype.base.type == "void")
@@ -529,8 +536,12 @@ unary_expression
 				if(!($2)->lvalue){
 					showError("Cannot take adress of nonlvalue");
 				}
+				temp->isAddress=true;
 			}
 			if(($1)=="DEREF"){
+				if(temp->expType.base.pointers != 0 && temp->expType.base.type == "void")
+					showError("Can't dereference a 'void' variable");
+
 				temp->expType.base.pointers--;
 				if(temp->expType.base.pointers < 0){
 					showError("Dereferencing non pointer type");
@@ -745,6 +756,10 @@ declaration
 				showError("variable can't be of type void");
 			}
 		}
+
+		// if(($1).type[0]=='s' && gst.symboltables.find("struct "+($1).type)==gst.symboltables.end())
+		// 	showError("Struct not defined");
+
 		$$ = $2;
 	}
 	;
