@@ -43,43 +43,53 @@ void showError(string s, int lineNumber = -1){
 	exit(0);
 }
 
+bool operator == (const type& t1, const type& t2){
+	if(t1.sizes!=t2.sizes) return false;
+	if(t1.base.type!=t2.base.type) return false;
+	if(t1.base.pointers!=t2.base.pointers) return false;
+	return true;
+}
+
 void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 	type t1 = e1->expType;
 	type t2 = e2->expType;
+
+	if(t1==t2) return;
 
 	string s1 = t1.base.type;
 	string s2 = t2.base.type;
 
 	if(isBasic(t1) && isBasic(t2)){
-		if(s1 == "string" && s2 != "string" ||
-			s2 == "string" && s1 != "string")
+		if(s1 == "string" && s2 != "string" || s2 == "string" && s1 != "string")
 			showError("Incompatible types", -1);
 		if(s1 == "float" && s2 == "int"){
 			e2->expType.base.type = "float";
 			e2->typeCasted = true;
-			// return e2->expType;
 		}
 		if(s1 == "int" && s2 == "float"){
 			e1->expType.base.type = "float";
 			e1->typeCasted = true;
-			// return e1->expType;
 		}
 		return;
-		// return type();
 	}
 
-	else{
-		// if((t1.base.type=="void" || s1 == s2) && 
-		// 	t1.base.pointers==1+ && t1.sizes.size()==0
-		// 	t2.base.pointers==1 && t2.base.type!="void" && ){
-		// 		e2->typeCasted=true;
-		// 		e2->expType=e1->expType;
-		// 	}
-		// }
-		// int x = t1.base.pointers + t1.sizes.size();
-		// int y = t2.base.pointers + t2.sizes.size();
-		// if((s1 == "void" || s1 == s2) &&  x == y && )
-	}
+	// one of them is not basic
+	if(s1 == "void" || s2 == "void")
+		showError("Cannot operate on void types");
+	return;
+
+	// else{
+	// 	// if((t1.base.type=="void" || s1 == s2) && 
+	// 	// 	t1.base.pointers==1+ && t1.sizes.size()==0
+	// 	// 	t2.base.pointers==1 && t2.base.type!="void" && ){
+	// 	// 		e2->typeCasted=true;
+	// 	// 		e2->expType=e1->expType;
+	// 	// 	}
+	// 	// }
+	// 	// int x = t1.base.pointers + t1.sizes.size();
+	// 	// int y = t2.base.pointers + t2.sizes.size();
+	// 	// if((s1 == "void" || s1 == s2) &&  x == y && )
+	// }
 
 }
 

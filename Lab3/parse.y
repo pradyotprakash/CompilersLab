@@ -287,7 +287,7 @@ compound_statement
 					else{
 						if(temp.vtype.base.type[0] == 's'){
 							if(gst.symboltables.find(temp.vtype.base.type) == gst.symboltables.end()){
-								showError("struct definition does not exist", -1);
+								showError("struct definition for \"" + temp.vtype.base.type + "\" does not exist in this declaration", -1);
 							}
 						}
 						curLocal.symbols[lstr.v.vname]=lstr;
@@ -303,7 +303,7 @@ compound_statement
 					else{
 						if(temp.vtype.base.type[0] == 's'){
 							if(gst.symboltables.find(temp.vtype.base.type) == gst.symboltables.end()){
-								showError("struct definition does not exist", -1);
+								showError("struct definition for \"" + temp.vtype.base.type + "\" does not exist in this declaration", -1);
 							}
 						}
 						curLocal.symbols[lstr.v.vname]=lstr;
@@ -367,6 +367,9 @@ expression
 		}
 		|  unary_expression '=' expression {
 			// TODO: Unary typecheck
+			if(($1)->expType.sizes.size()!=0){
+				showError("Whole array assignments not allowed!");
+			}
 			unaryTypeCheck(($1)->expType, $3);
 			if(!($1)->lvalue){
 				showError("Cannot assign a value to a non-lvalue");	
@@ -727,12 +730,7 @@ declaration_list
 
 declaration
 	: type_specifier declarator_list';' {
-		if(($1).type == "void" && ($1).pointers == 0)
-			showError("variable can't be of type void");
-		// if(($1).type[0]=='s' && gst.symboltables.find(($1).type)==gst.symboltables.end()){
-		// 	cerr<<($1).type<<endl;
-		// 	showError("struct has not been declared");
-		// }
+		
 		type temp(($1), vector<int>(0));
 		if(($1).type==curStruct){
 			for(auto v: ($2)){
@@ -744,6 +742,9 @@ declaration
 				
 		for(int i=0;i<($2).size();++i){
 			($2)[i].vtype.base.type = ($1).type;
+			if(($2)[i].vtype.base.type == "void" && ($2)[i].vtype.base.pointers == 0){
+				showError("variable can't be of type void");
+			}
 		}
 		$$ = $2;
 	}

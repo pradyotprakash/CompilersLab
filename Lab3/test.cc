@@ -1,10 +1,10 @@
 struct a{
     int a, b;
     float c, d;
-    struct a * str;
+    struct a *** str;
 };
 
-int* h(int y){
+int h(int y){
     int t;
     t = y*y;
     return t;
@@ -17,11 +17,9 @@ int f(){
 
 int main(){
     struct a x;
-    float y;
-    int g;
-    g = f(2);
-    x.a = (x.a < x.d) && x.c;
-    x.str->a;
-    return 1;
-}   
+    struct a y;
+    void * a, * b;
+    x=y;
 
+    return 0;
+}

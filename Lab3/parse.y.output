@@ -1,4 +1,4 @@
-[[parse.y (info)] Line 762: 
+[[parse.y (info)] Line 763: 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: translation_unit ->  struct_specifier
@@ -149,21 +149,21 @@ FIRST sets:
    compound_statement: { '{' }
    #0004:    { <e> }
    #0005:    { <e> }
-   statement_list: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }
-   statement: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }
-   assignment_statement: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER ';' '(' '*' '-' '&' '!' }
-   expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   logical_or_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   logical_and_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   equality_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   relational_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   additive_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   multiplicative_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   unary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
+   statement_list: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }
+   statement: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }
+   assignment_statement: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' ';' '(' '*' '-' '&' }
+   expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   logical_or_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   logical_and_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   equality_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   relational_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   additive_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   multiplicative_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   unary_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
    postfix_expression: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' }
    #0006:    { <e> }
-   expression_list: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
-   unary_operator: { '*' '-' '&' '!' }
+   expression_list: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
+   unary_operator: { '!' '*' '-' '&' }
    selection_statement: { IF }
    iteration_statement: { FOR WHILE }
    declaration_list: { VOID INT FLOAT STRUCT }
@@ -186,11 +186,11 @@ FOLLOW sets:
    declarator: { ';' ')' ',' '[' }
    primary_expression: { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP PTR_OP ';' ')' '*' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }
    compound_statement: { VOID INT FLOAT STRUCT <EOF> }
-   #0004:    { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }
-   #0005:    { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }
-   statement_list: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }
-   statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }
-   assignment_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }
+   #0004:    { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }
+   #0005:    { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }
+   statement_list: { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }
+   statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }
+   assignment_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }
    expression: { ';' ')' ',' ']' }
    logical_or_expression: { OR_OP ';' ')' ',' ']' }
    logical_and_expression: { OR_OP AND_OP ';' ')' ',' ']' }
@@ -200,13 +200,13 @@ FOLLOW sets:
    multiplicative_expression: { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP ';' ')' '*' ',' ']' '<' '>' '+' '-' '/' }
    unary_expression: { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP ';' ')' '*' ',' ']' '=' '<' '>' '+' '-' '/' }
    postfix_expression: { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP PTR_OP ';' ')' '*' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }
-   #0006:    { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }
+   #0006:    { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }
    expression_list: { ')' ',' }
    unary_operator: { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' }
-   selection_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }
-   iteration_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }
-   declaration_list: { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }
-   declaration: { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }
+   selection_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }
+   iteration_statement: { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }
+   declaration_list: { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }
+   declaration: { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }
    declarator_list: { ';' ',' }
    translation_unit_$: { <EOF> }
 
@@ -420,10 +420,10 @@ State 21:
 0: [P28 1] compound_statement -> '{'  . '}'   { VOID INT FLOAT STRUCT <EOF> }  0, () 0
 1: [P29 1] compound_statement -> '{'  . #0004 statement_list '}'   { VOID INT FLOAT STRUCT <EOF> }  0, (3 ) 1
 2: [P31 1] compound_statement -> '{'  . declaration_list #0005 statement_list '}'   { VOID INT FLOAT STRUCT <EOF> }  0, (4 5 ) 2
-3: [P30 0] #0004 ->  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }  1, () -1
-4: [P81 0] declaration_list ->  . declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' ';' '(' '*' '-' '&' '!' }  0, (6 ) 3
-5: [P82 0] declaration_list ->  . declaration_list declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' ';' '(' '*' '-' '&' '!' }  0, (4 5 ) 2
-6: [P83 0] declaration ->  . type_specifier declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' ';' '(' '*' '-' '&' '!' }  0, (7 8 9 10 ) 4
+3: [P30 0] #0004 ->  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }  1, () -1
+4: [P81 0] declaration_list ->  . declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' ';' '(' '*' '-' '&' }  0, (6 ) 3
+5: [P82 0] declaration_list ->  . declaration_list declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' ';' '(' '*' '-' '&' }  0, (4 5 ) 2
+6: [P83 0] declaration ->  . type_specifier declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' ';' '(' '*' '-' '&' }  0, (7 8 9 10 ) 4
 7: [P9 0] type_specifier ->  . VOID   { IDENTIFIER '*' }  0, () 5
 8: [P10 0] type_specifier ->  . INT   { IDENTIFIER '*' }  0, () 6
 9: [P11 0] type_specifier ->  . FLOAT   { IDENTIFIER '*' }  0, () 7
@@ -481,12 +481,12 @@ State 24:
 
 
 State 25:
-0: [P81 1] declaration_list -> declaration  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P81 1] declaration_list -> declaration  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 26:
-0: [P83 1] declaration -> type_specifier  . declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P83 1] declaration -> type_specifier  . declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P84 0] declarator_list ->  . declarator   { ';' ',' }  0, (3 4 5 ) 1
 2: [P85 0] declarator_list ->  . declarator_list ',' declarator   { ';' ',' }  0, (1 2 ) 0
 3: [P20 0] declarator ->  . IDENTIFIER   { ';' ',' '[' }  0, () 2
@@ -510,18 +510,18 @@ State 28:
 
 State 29:
 0: [P29 2] compound_statement -> '{' #0004  . statement_list '}'   { VOID INT FLOAT STRUCT <EOF> }  0, (1 2 ) 0
-1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (3 4 5 6 7 ) 1
-2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
-3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 ) 3
-5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 5
-7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (13 14 ) 11
+1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (3 4 5 6 7 ) 1
+2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
+3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 ) 3
+5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 5
+7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (13 14 ) 11
 13: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (15 16 ) 12
 14: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (17 18 ) 13
 15: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (19 20 ) 14
@@ -595,9 +595,9 @@ State 29:
 
 State 30:
 0: [P31 2] compound_statement -> '{' declaration_list  . #0005 statement_list '}'   { VOID INT FLOAT STRUCT <EOF> }  0, (2 ) 0
-1: [P82 1] declaration_list -> declaration_list  . declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' ';' '(' '*' '-' '&' '!' }  0, (3 ) 1
-2: [P32 0] #0005 ->  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' ';' '(' '*' '-' '&' '!' }  1, () -1
-3: [P83 0] declaration ->  . type_specifier declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' ';' '(' '*' '-' '&' '!' }  0, (4 5 6 7 ) 2
+1: [P82 1] declaration_list -> declaration_list  . declaration   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' ';' '(' '*' '-' '&' }  0, (3 ) 1
+2: [P32 0] #0005 ->  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' ';' '(' '*' '-' '&' }  1, () -1
+3: [P83 0] declaration ->  . type_specifier declarator_list ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' ';' '(' '*' '-' '&' }  0, (4 5 6 7 ) 2
 4: [P9 0] type_specifier ->  . VOID   { IDENTIFIER '*' }  0, () 3
 5: [P10 0] type_specifier ->  . INT   { IDENTIFIER '*' }  0, () 4
 6: [P11 0] type_specifier ->  . FLOAT   { IDENTIFIER '*' }  0, () 5
@@ -640,12 +640,12 @@ State 34:
 
 
 State 35:
-0: [P82 2] declaration_list -> declaration_list declaration  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P82 2] declaration_list -> declaration_list declaration  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 36:
-0: [P83 2] declaration -> type_specifier declarator_list  . ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P83 2] declaration -> type_specifier declarator_list  . ';'   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
 1: [P85 1] declarator_list -> declarator_list  . ',' declarator   { ';' ',' }  0, () 1
   0:   On ';' to state 77 with (0 )
   1:   On ',' to state 78 with (1 )
@@ -680,17 +680,17 @@ State 40:
 
 State 41:
 0: [P29 3] compound_statement -> '{' #0004 statement_list  . '}'   { VOID INT FLOAT STRUCT <EOF> }  0, () 0
-1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (2 3 4 5 6 ) 1
-2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 ) 3
-4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 9 ) 4
-5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (10 11 ) 5
-6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (12 13 ) 11
+1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (2 3 4 5 6 ) 1
+2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 ) 3
+4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 9 ) 4
+5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (10 11 ) 5
+6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (12 13 ) 11
 12: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (14 15 ) 12
 13: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (16 17 ) 13
 14: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (18 19 ) 14
@@ -763,24 +763,24 @@ State 41:
 
 
 State 42:
-0: [P33 1] statement_list -> statement  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P33 1] statement_list -> statement  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 43:
-0: [P35 1] statement -> '{'  . statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
-1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (3 4 5 6 7 ) 1
-2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
-3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 ) 3
-5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 5
-7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (13 14 ) 11
+0: [P35 1] statement -> '{'  . statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
+1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (3 4 5 6 7 ) 1
+2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
+3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 ) 3
+5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 5
+7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (13 14 ) 11
 13: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (15 16 ) 12
 14: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (17 18 ) 13
 15: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (19 20 ) 14
@@ -853,22 +853,22 @@ State 43:
 
 
 State 44:
-0: [P36 1] statement -> selection_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P36 1] statement -> selection_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 45:
-0: [P37 1] statement -> iteration_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P37 1] statement -> iteration_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 46:
-0: [P38 1] statement -> assignment_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P38 1] statement -> assignment_statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 47:
-0: [P39 1] statement -> RETURN  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P39 1] statement -> RETURN  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (7 8 ) 3
@@ -930,27 +930,27 @@ State 47:
 
 
 State 48:
-0: [P78 1] selection_statement -> IF  . '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P78 1] selection_statement -> IF  . '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On '(' to state 85 with (0 )
 
 
 State 49:
-0: [P79 1] iteration_statement -> WHILE  . '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P79 1] iteration_statement -> WHILE  . '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On '(' to state 86 with (0 )
 
 
 State 50:
-0: [P80 1] iteration_statement -> FOR  . '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P80 1] iteration_statement -> FOR  . '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On '(' to state 87 with (0 )
 
 
 State 51:
-0: [P40 1] assignment_statement -> ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P40 1] assignment_statement -> ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 52:
-0: [P41 1] assignment_statement -> expression  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P41 1] assignment_statement -> expression  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ';' to state 88 with (0 )
 
 
@@ -1163,18 +1163,18 @@ State 71:
 
 State 72:
 0: [P31 3] compound_statement -> '{' declaration_list #0005  . statement_list '}'   { VOID INT FLOAT STRUCT <EOF> }  0, (1 2 ) 0
-1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (3 4 5 6 7 ) 1
-2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
-3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 ) 3
-5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 5
-7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (13 14 ) 11
+1: [P33 0] statement_list ->  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (3 4 5 6 7 ) 1
+2: [P34 0] statement_list ->  . statement_list statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
+3: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+4: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 ) 3
+5: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+6: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 5
+7: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+8: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+9: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+10: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+11: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+12: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (13 14 ) 11
 13: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (15 16 ) 12
 14: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (17 18 ) 13
 15: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (19 20 ) 14
@@ -1279,7 +1279,7 @@ State 76:
 
 
 State 77:
-0: [P83 3] declaration -> type_specifier declarator_list ';'  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P83 3] declaration -> type_specifier declarator_list ';'  .   { FOR VOID INT FLOAT RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
@@ -1323,23 +1323,23 @@ State 81:
 
 
 State 82:
-0: [P34 2] statement_list -> statement_list statement  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P34 2] statement_list -> statement_list statement  .   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 83:
-0: [P35 2] statement -> '{' statement_list  . '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
-1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (2 3 4 5 6 ) 1
-2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 ) 3
-4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 9 ) 4
-5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (10 11 ) 5
-6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (12 13 ) 11
+0: [P35 2] statement -> '{' statement_list  . '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
+1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (2 3 4 5 6 ) 1
+2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 ) 3
+4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 9 ) 4
+5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (10 11 ) 5
+6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (12 13 ) 11
 12: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (14 15 ) 12
 13: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (16 17 ) 13
 14: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (18 19 ) 14
@@ -1412,12 +1412,12 @@ State 83:
 
 
 State 84:
-0: [P39 2] statement -> RETURN expression  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P39 2] statement -> RETURN expression  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ';' to state 115 with (0 )
 
 
 State 85:
-0: [P78 2] selection_statement -> IF '('  . expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P78 2] selection_statement -> IF '('  . expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ')' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ')' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ')' }  0, (7 8 ) 3
@@ -1479,7 +1479,7 @@ State 85:
 
 
 State 86:
-0: [P79 2] iteration_statement -> WHILE '('  . expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P79 2] iteration_statement -> WHILE '('  . expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ')' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ')' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ')' }  0, (7 8 ) 3
@@ -1541,7 +1541,7 @@ State 86:
 
 
 State 87:
-0: [P80 2] iteration_statement -> FOR '('  . expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P80 2] iteration_statement -> FOR '('  . expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (7 8 ) 3
@@ -1603,7 +1603,7 @@ State 87:
 
 
 State 88:
-0: [P41 2] assignment_statement -> expression ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P41 2] assignment_statement -> expression ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
@@ -1969,7 +1969,7 @@ State 98:
 State 99:
 0: [P65 2] postfix_expression -> IDENTIFIER '('  . ')'   { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP PTR_OP ';' ')' '*' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, () 0
 1: [P66 2] postfix_expression -> IDENTIFIER '('  . #0006 expression_list ')'   { LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP PTR_OP ';' ')' '*' ',' '[' ']' '=' '<' '>' '+' '-' '/' '.' }  0, (2 ) 1
-2: [P67 0] #0006 ->  .   { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '(' '*' '-' '&' '!' }  1, () -1
+2: [P67 0] #0006 ->  .   { INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '(' '*' '-' '&' }  1, () -1
   0:   On ')' to state 128 with (0 )
   1:   On #0006 to state 129 with (1 )
   Reduce item(s): 2 
@@ -2302,17 +2302,17 @@ State 108:
 
 State 109:
 0: [P31 4] compound_statement -> '{' declaration_list #0005 statement_list  . '}'   { VOID INT FLOAT STRUCT <EOF> }  0, () 0
-1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (2 3 4 5 6 ) 1
-2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 2
-3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 ) 3
-4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (8 9 ) 4
-5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (10 11 ) 5
-6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 10
-11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (12 13 ) 11
+1: [P34 1] statement_list -> statement_list  . statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (2 3 4 5 6 ) 1
+2: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 2
+3: [P36 0] statement ->  . selection_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 ) 3
+4: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (8 9 ) 4
+5: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (10 11 ) 5
+6: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 10
+11: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (12 13 ) 11
 12: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (14 15 ) 12
 13: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (16 17 ) 13
 14: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (18 19 ) 14
@@ -2407,27 +2407,27 @@ State 113:
 
 
 State 114:
-0: [P35 3] statement -> '{' statement_list '}'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P35 3] statement -> '{' statement_list '}'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 115:
-0: [P39 3] statement -> RETURN expression ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P39 3] statement -> RETURN expression ';'  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 116:
-0: [P78 3] selection_statement -> IF '(' expression  . ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P78 3] selection_statement -> IF '(' expression  . ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ')' to state 141 with (0 )
 
 
 State 117:
-0: [P79 3] iteration_statement -> WHILE '(' expression  . ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P79 3] iteration_statement -> WHILE '(' expression  . ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ')' to state 142 with (0 )
 
 
 State 118:
-0: [P80 3] iteration_statement -> FOR '(' expression  . ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P80 3] iteration_statement -> FOR '(' expression  . ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ';' to state 143 with (0 )
 
 
@@ -2648,7 +2648,7 @@ State 140:
 
 
 State 141:
-0: [P78 4] selection_statement -> IF '(' expression ')'  . statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 3 4 5 ) 0
+0: [P78 4] selection_statement -> IF '(' expression ')'  . statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 3 4 5 ) 0
 1: [P35 0] statement ->  . '{' statement_list '}'   { ELSE }  0, () 1
 2: [P36 0] statement ->  . selection_statement   { ELSE }  0, (6 ) 2
 3: [P37 0] statement ->  . iteration_statement   { ELSE }  0, (7 8 ) 3
@@ -2730,17 +2730,17 @@ State 141:
 
 
 State 142:
-0: [P79 4] iteration_statement -> WHILE '(' expression ')'  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 3 4 5 ) 0
-1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 1
-2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (6 ) 2
-3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 8 ) 3
-4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 5
-6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 10
+0: [P79 4] iteration_statement -> WHILE '(' expression ')'  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 3 4 5 ) 0
+1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 1
+2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (6 ) 2
+3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 8 ) 3
+4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 5
+6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 10
 11: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (13 14 ) 11
 12: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (15 16 ) 12
 13: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (17 18 ) 13
@@ -2812,7 +2812,7 @@ State 142:
 
 
 State 143:
-0: [P80 4] iteration_statement -> FOR '(' expression ';'  . expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P80 4] iteration_statement -> FOR '(' expression ';'  . expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (7 8 ) 3
@@ -2891,17 +2891,17 @@ State 146:
 
 
 State 147:
-0: [P78 5] selection_statement -> IF '(' expression ')' statement  . ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P78 5] selection_statement -> IF '(' expression ')' statement  . ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ELSE to state 152 with (0 )
 
 
 State 148:
-0: [P79 5] iteration_statement -> WHILE '(' expression ')' statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P79 5] iteration_statement -> WHILE '(' expression ')' statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 149:
-0: [P80 5] iteration_statement -> FOR '(' expression ';' expression  . ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P80 5] iteration_statement -> FOR '(' expression ';' expression  . ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ';' to state 153 with (0 )
 
 
@@ -2973,17 +2973,17 @@ State 151:
 
 
 State 152:
-0: [P78 6] selection_statement -> IF '(' expression ')' statement ELSE  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 3 4 5 ) 0
-1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 1
-2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (6 ) 2
-3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 8 ) 3
-4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 5
-6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 10
+0: [P78 6] selection_statement -> IF '(' expression ')' statement ELSE  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 3 4 5 ) 0
+1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 1
+2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (6 ) 2
+3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 8 ) 3
+4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 5
+6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 10
 11: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (13 14 ) 11
 12: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (15 16 ) 12
 13: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (17 18 ) 13
@@ -3055,7 +3055,7 @@ State 152:
 
 
 State 153:
-0: [P80 6] iteration_statement -> FOR '(' expression ';' expression ';'  . expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 ) 0
+0: [P80 6] iteration_statement -> FOR '(' expression ';' expression ';'  . expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 ) 0
 1: [P42 0] expression ->  . logical_or_expression   { ')' }  0, (3 4 ) 1
 2: [P43 0] expression ->  . unary_expression '=' expression   { ')' }  0, (5 6 ) 2
 3: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ')' }  0, (7 8 ) 3
@@ -3122,27 +3122,27 @@ State 154:
 
 
 State 155:
-0: [P78 7] selection_statement -> IF '(' expression ')' statement ELSE statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P78 7] selection_statement -> IF '(' expression ')' statement ELSE statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 
 State 156:
-0: [P80 7] iteration_statement -> FOR '(' expression ';' expression ';' expression  . ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 0
+0: [P80 7] iteration_statement -> FOR '(' expression ';' expression ';' expression  . ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 0
   0:   On ')' to state 157 with (0 )
 
 
 State 157:
-0: [P80 8] iteration_statement -> FOR '(' expression ';' expression ';' expression ')'  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (1 2 3 4 5 ) 0
-1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 1
-2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (6 ) 2
-3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (7 8 ) 3
-4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (9 10 ) 4
-5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 5
-6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 6
-7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 7
-8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 8
-9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, () 9
-10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  0, (11 12 ) 10
+0: [P80 8] iteration_statement -> FOR '(' expression ';' expression ';' expression ')'  . statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (1 2 3 4 5 ) 0
+1: [P35 0] statement ->  . '{' statement_list '}'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 1
+2: [P36 0] statement ->  . selection_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (6 ) 2
+3: [P37 0] statement ->  . iteration_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (7 8 ) 3
+4: [P38 0] statement ->  . assignment_statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (9 10 ) 4
+5: [P39 0] statement ->  . RETURN expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 5
+6: [P78 0] selection_statement ->  . IF '(' expression ')' statement ELSE statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 6
+7: [P79 0] iteration_statement ->  . WHILE '(' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 7
+8: [P80 0] iteration_statement ->  . FOR '(' expression ';' expression ';' expression ')' statement   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 8
+9: [P40 0] assignment_statement ->  . ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, () 9
+10: [P41 0] assignment_statement ->  . expression ';'   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  0, (11 12 ) 10
 11: [P42 0] expression ->  . logical_or_expression   { ';' }  0, (13 14 ) 11
 12: [P43 0] expression ->  . unary_expression '=' expression   { ';' }  0, (15 16 ) 12
 13: [P44 0] logical_or_expression ->  . logical_and_expression   { OR_OP ';' }  0, (17 18 ) 13
@@ -3214,7 +3214,7 @@ State 157:
 
 
 State 158:
-0: [P80 9] iteration_statement -> FOR '(' expression ';' expression ';' expression ')' statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '{' '}' ';' '(' '*' '-' '&' '!' }  1, () -1
+0: [P80 9] iteration_statement -> FOR '(' expression ';' expression ';' expression ')' statement  .   { FOR RETURN IF ELSE WHILE INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER '!' '{' '}' ';' '(' '*' '-' '&' }  1, () -1
   Reduce item(s): 0 
 
 

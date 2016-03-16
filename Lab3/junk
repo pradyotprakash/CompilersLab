@@ -4,3 +4,5 @@ h AST Starts Now:
 f AST Starts Now:
 (Block [(Return (PP (Id "s") ) ) ])
 main AST Starts Now:
+(Block [(Ass (Id "x")  (Id "y") )
+(Return (IntConst 0) ) ])
