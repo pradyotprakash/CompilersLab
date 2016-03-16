@@ -93,23 +93,21 @@ void binaryTypeCheck(exp_astnode *e1, exp_astnode *e2){
 
 }
 
-
 void unaryTypeCheck(type t1, exp_astnode* e){
 	type t2 = e->expType;
+	cerr<<t1.base.type<<" "<<e->expType.base.type<<endl;
 	if(isBasic(t1) && isBasic(t2)){
 		if(t1.base.type == "string" && t2.base.type != "string" ||
 			t2.base.type == "string" && t1.base.type != "string"){
-			showError("Return type mismatch", -1);
+			showError("Incompatible types!", -1);
 		}
-		else{
-			e->expType = t1;	
-		}
-		if(t1.base.type != t2.base.type){
-			showError("Incompatible types!");
-		}
+		if(t2==t1) return;
+		e->expType = t1;
+		e->typeCasted=true;
 		return;
 	}
-	if(e->expType.base.type=="void") showError("Incompatible type!");
+
+	//if(e->expType.base.type=="void") showError("Incompatible type!");
 }
 
 void stmt_astnode::print(int l){
@@ -168,7 +166,10 @@ void assign_exp_astnode::print(int l){
 	std::cout<<"(Ass ";
 	this->l->print(0);
 	std::cout<<" ";
+	if(r->typeCasted) cout<<"(to_"+r->expType.base.type<<" ";
 	r->print(0);
+	if(r->typeCasted) cout<<") ";
+	
 	std::cout<<")\n";
 }
 
@@ -180,7 +181,10 @@ void return_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
 	std::cout<<"(Return ";
+	if(node->typeCasted) cout<<"(to_"+node->expType.base.type<<" ";
 	node->print(0);
+	if(node->typeCasted) cout<<") ";
+
 	std::cout<<") ";
 }
 
@@ -291,7 +295,9 @@ void funcall_astnode::print(int l){
 		cout<<' ';
 	std::cout<<"( "<<funcName<<" (";
 	for(int i=0;i<nodes.size();++i){
+		if(nodes[i]->typeCasted) cout<<"(to_"<<nodes[i]->expType.base.type;
 		nodes[i]->print(0);	
+		if(nodes[i]->typeCasted) cout<<") ";
 	}
 	std::cout<<") ) ";
 }

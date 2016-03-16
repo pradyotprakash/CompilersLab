@@ -24,9 +24,8 @@
 %%
 
 // TODO
-// 1) unaryTypeCheck, binaryTypeCheck
-// 2) pointer and array declaration, usage
-// 3) pointer, array, references weirdness
+// 1) pointer and array declaration, usage
+// 2) pointer, array, references weirdness
 
 
 
