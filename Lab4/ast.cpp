@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include "ast.h"
 #ifndef ASTCPP
 
@@ -7,9 +8,11 @@ vector<type> parameterTypes;
 string curStruct;
 bool hasReturn;
 
+int tempOffsets;
+
 globalSymbolTable gst;
 
-vector<int> tempOffsets;
+vector<stmt_astnode*> functions;
 
 int getSize(variable v){
 	string type = v.vtype.base.type;
@@ -34,7 +37,6 @@ int getSize(variable v){
 
 	return baseSize*mul;
 }
-
 
 bool isBasic(type t){
 	if(t.sizes.size() == 0 && t.base.pointers == 0 && t.base.type != "void")
@@ -158,24 +160,25 @@ void stmt_astnode::print(int l){
 	std::cout<<"This should never be called; stmt_astnode"<<std::endl;
 }
 
-string stmt_astnode::gencode(){
-
+void stmt_astnode::gencode(int accessType){
+	cout<<"This should never be called; gencode stmt_astnode"<<endl;
+	;
 }
 
 void exp_astnode::print(int l){
 	std::cout<<"This should never be called; exp_astnode"<<std::endl;
 }
 
-string exp_astnode::gencode(){
-
+void exp_astnode::gencode(int accessType){
+	std::cout<<"This should never be called; gencode exp_astnode"<<std::endl;
 }
 
 void ref_astnode::print(int l){
 	std::cout<<"This should never be called; ref_astnode"<<std::endl;
 }
 
-string ref_astnode::gencode(){
-
+void ref_astnode::gencode(int accessType){
+	std::cout<<"This should never be called; gencode ref_astnode"<<std::endl;
 }
 
 empty_astnode::empty_astnode(){
@@ -188,8 +191,8 @@ void empty_astnode::print(int l){
 	std::cout<<"(Empty)";
 }
 
-string empty_astnode::gencode(){
-
+void empty_astnode::gencode(int accessType){
+	
 }
 
 seq_astnode::seq_astnode(std::vector<stmt_astnode*> n){
@@ -205,8 +208,12 @@ void seq_astnode::print(int l){
 	std::cout<<"])\n";
 }
 
-string seq_astnode::gencode(){
-
+void seq_astnode::gencode(int accessType){
+	for(unsigned int i=0; i<nodes.size(); i++){
+		int defaultOffset = tempOffsets;
+		nodes[i]->gencode(0);
+		tempOffsets=defaultOffset;
+	}
 }
 
 assign_stmt_astnode::assign_stmt_astnode(exp_astnode* n2){
@@ -216,11 +223,11 @@ assign_stmt_astnode::assign_stmt_astnode(exp_astnode* n2){
 void assign_stmt_astnode::print(int l){
 	for(int i=0;i<l;++i)
 		cout<<' ';
-	this->r->print(0);
+	r->print(0);
 }
 
-string assign_stmt_astnode::gencode(){
-
+void assign_stmt_astnode::gencode(int accessType){
+	r->gencode(0);
 }
 
 assign_exp_astnode::assign_exp_astnode(exp_astnode* n1, exp_astnode* n2){
@@ -241,8 +248,15 @@ void assign_exp_astnode::print(int l){
 	std::cout<<")\n";
 }
 
-string assign_exp_astnode::gencode(){
+void assign_exp_astnode::gencode(int accessType){
+	// TODO: assigning for structs and floats
 
+	l->gencode(2);
+	r->gencode(1);
+	cout<<"# assignment"<<endl;
+	cout<<"lw $t0, "<<r->tempOffset<<"($sp)"<<endl;
+	cout<<"lw $t1, "<<l->tempOffset<<"($sp)"<<endl;
+	cout<<"sw $t0, 0($t1)"<<endl;
 }
 
 return_astnode::return_astnode(exp_astnode* n){
@@ -256,11 +270,23 @@ void return_astnode::print(int l){
 	if(node->typeCasted) cout<<"(to_"+node->expType.base.type<<" ";
 	node->print(0);
 	if(node->typeCasted) cout<<") ";
-
 	std::cout<<") ";
+
 }
 
-string return_astnode::gencode(){
+void return_astnode::gencode(int accessType){
+	node->gencode(1);
+	// TODO: struct copying
+	// TODO: typecasting
+	int rlocation = 8 + gst.getTotalArgsSize("function "+curFuncName);
+	cout<<"# copying to RV"<<endl;
+	cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+	cout<<"sw $t0, "<<rlocation<<"($sp)"<<endl;
+	cout<<"add $v0, $t0, $0"<<endl;
+	cout<<"# returning"<<endl;
+	cout<<"lw $ra, 4($sp)"<<endl;
+	cout<<"lw $sp, 0($sp)"<<endl;
+	cout<<"jr $ra"<<endl;
 
 }
 
@@ -282,8 +308,8 @@ void if_astnode::print(int l){
 	std::cout<<") \n";
 }
 
-string if_astnode::gencode(){
-
+void if_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 while_astnode::while_astnode(exp_astnode* n1, stmt_astnode* n2){
@@ -301,8 +327,8 @@ void while_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string while_astnode::gencode(){
-
+void while_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 for_astnode::for_astnode(exp_astnode** n1, stmt_astnode* n2){
@@ -324,8 +350,8 @@ void for_astnode::print(int l){
 	std::cout<<")\n";
 }
 
-string for_astnode::gencode(){
-
+void for_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 op_astnode2::op_astnode2(exp_astnode** n1, std::string n2){
@@ -360,7 +386,30 @@ void op_astnode2::print(int l){
 	std::cout<<") ";
 }
 
-string op_astnode2::gencode(){
+void op_astnode2::gencode(int accessType){
+	// TODO: type casting, boolean!
+
+	nodes[0]->gencode(1);
+	nodes[1]->gencode(1);
+	cout<<"# Load values onto registers"<<endl;
+	cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+	cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+	
+	cout<<"# generate op code"<<endl;
+	if(op == "PLUS")
+		cout<<"add $t0, $t0, $t1"<<endl;
+	else if(op == "MINUS")
+		cout<<"sub $t0, $t0, $t1"<<endl;
+	else if(op == "MULT"){
+		cout<<"mul $t0, $t0, $t1"<<endl;
+	}
+	else if(op == "DIV"){
+		cout<<"div $t0, $t0, $t1"<<endl;
+	}
+	tempOffsets -= 4;
+	tempOffset = tempOffsets;
+	cout<<"# store the value back into memory"<<endl;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 
 }
 
@@ -377,8 +426,8 @@ void op_astnode1::print(int l){
 	std::cout<<") ";
 }
 
-string op_astnode1::gencode(){
-
+void op_astnode1::gencode(int accessType){
+	// TODO: everything
 }
 
 funcall_astnode::funcall_astnode(std::string n1, std::vector<exp_astnode*> n2){
@@ -398,8 +447,8 @@ void funcall_astnode::print(int l){
 	std::cout<<") ) ";
 }
 
-string funcall_astnode::gencode(){
-
+void funcall_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 floatconst_astnode::floatconst_astnode(float n){
@@ -412,8 +461,8 @@ void floatconst_astnode::print(int l){
 	std::cout<<"(FloatConst "<<val<<") ";
 }
 
-string floatconst_astnode::gencode(){
-
+void floatconst_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 intconst_astnode::intconst_astnode(int n){
@@ -426,8 +475,12 @@ void intconst_astnode::print(int l){
 	std::cout<<"(IntConst "<<val<<") ";
 }
 
-string intconst_astnode::gencode(){
-
+void intconst_astnode::gencode(int accessType){
+	cout<<"# loading intconst"<<endl;
+	cout<<"addi $t0, $0, "<<val<<endl;
+	tempOffsets-=4;
+	tempOffset = tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
 stringconst_astnode::stringconst_astnode(std::string n){
@@ -440,24 +493,8 @@ void stringconst_astnode::print(int l){
 	std::cout<<"(StringConst "<<val<<") ";
 }
 
-string stringconst_astnode::gencode(){
-
-}
-
-refast_astnode::refast_astnode(ref_astnode* n){
-	ref=n;
-}
-
-void refast_astnode::print(int l){
-	for(int i=0;i<l;++i)
-		cout<<' ';
-	std::cout<<"(RefAst ";
-	ref->print(0);
-	std::cout<<") ";
-}
-
-string refast_astnode::gencode(){
-
+void stringconst_astnode::gencode(int accessType){
+	// TODO: everything
 }
 
 identifier_astnode::identifier_astnode(std::string n){
@@ -470,15 +507,22 @@ void identifier_astnode::print(int l){
 	std::cout<<"(Id \""<<name<<"\") ";
 }
 
-string identifier_astnode::gencode(){
-
+void identifier_astnode::gencode(int accessType){
+	localSymbolTable lst = gst.symboltables["function "+curFuncName];
+	int variableOffset = lst.symbols[name].v.offset;
+	if(accessType==0){
+		cerr<<"Should never happen"<<endl;
+	}
+	cout<<"addi $t0, $sp, "<<variableOffset<<endl;
+	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
+	tempOffsets-=4;
+	tempOffset=tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;		
 }
-
 
 arrayref_astnode::arrayref_astnode(exp_astnode* b, exp_astnode* o){
 	base = b;
 	offset = o;
-
 	this->lvalue = true;
 }
 
@@ -493,8 +537,24 @@ void arrayref_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string arrayref_astnode::gencode(){
-
+void arrayref_astnode::gencode(int accessType){
+	if(accessType==0) cerr<<"Should never happen"<<endl;
+	base->gencode(2);
+	offset->gencode(1);
+	int t=4;
+	type tempType = base->expType;
+	if(tempType.sizes.size()!=0){
+		tempType.sizes.erase(tempType.sizes.begin());
+		t = getSize(variable(tempType, "", 0, 0));
+	}
+	cout<<"lw $t0, "<<offset->tempOffset<<"($sp)"<<endl;
+	cout<<"muli $t0, $t0, "<<t<<endl;
+	cout<<"lw $t1, "<<base->tempOffset<<"($sp)"<<endl;
+	cout<<"sub $t0, $t1, $t0"<<endl;
+	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
+	tempOffsets -= 4;
+	tempOffset=tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
 pointer_astnode::pointer_astnode(ref_astnode* n){
@@ -509,8 +569,12 @@ void pointer_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string pointer_astnode::gencode(){
-
+void pointer_astnode::gencode(int accessType){
+	int t = node->tempOffset;
+	cout<<"lw $t0, "<<t<<"($sp)"<<endl;
+	tempOffsets-=4;
+	tempOffset=tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
 deref_astnode::deref_astnode(ref_astnode* n){
@@ -525,14 +589,13 @@ void deref_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string deref_astnode::gencode(){
+void deref_astnode::gencode(int accessType){
 
 }
 
 member_astnode::member_astnode(exp_astnode* n, identifier_astnode* i){
 	node=n;
 	id=i;
-
 	this->lvalue = true;
 }
 
@@ -546,14 +609,22 @@ void member_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string member_astnode::gencode(){
-
+void member_astnode::gencode(int accessType){
+	node->gencode(2);
+	int offset = node->tempOffset;
+	localSymbolTable lst = gst.symboltables[node->expType.base.type];
+	int varOffset = lst.symbols[id->name].v.offset;
+	cout<<"sw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+	cout<<"addi $t0, $t0, "<<varOffset<<endl;
+	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
+	tempOffsets-=4;
+	tempOffset=tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
 arrow_astnode::arrow_astnode(exp_astnode* n, identifier_astnode* i){
 	node=n;
 	id=i;
-
 	this->lvalue = true;
 }
 
@@ -567,8 +638,17 @@ void arrow_astnode::print(int l){
 	std::cout<<") ";
 }
 
-string arrow_astnode::gencode(){
-
+void arrow_astnode::gencode(int accessType){
+	node->gencode(1);
+	int offset = node->tempOffset;
+	localSymbolTable lst = gst.symboltables[node->expType.base.type];
+	int varOffset = lst.symbols[id->name].v.offset;
+	cout<<"sw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+	cout<<"addi $t0, $t0, "<<varOffset<<endl;
+	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
+	tempOffsets-=4;
+	tempOffset=tempOffsets;
+	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
 #define ASTCPP

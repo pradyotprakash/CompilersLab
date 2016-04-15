@@ -117,8 +117,7 @@ public:
 	int getTotalLocalSize(){
 		int m = 0;
 		for(auto lstr: symbols){
-			auto v = lstr.second.v;
-			m=max(m, v.offset+v.size);
+			if(lstr.second.v.offset < 0) m+=lstr.second.v.size;
 		}
 		return m;
 	}
@@ -126,8 +125,7 @@ public:
 	int getTotalArgsSize(){
 		int m = 0;
 		for(auto lstr: symbols){
-			auto v = lstr.second.v;
-			m=min(m, v.offset);
+			if(lstr.second.v.offset >= 0) m+=lstr.second.v.size;
 		}
 		return m;
 	}

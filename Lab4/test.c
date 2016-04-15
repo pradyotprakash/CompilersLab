@@ -1,15 +1,18 @@
 struct s {
-    int a[20];
+	int c;
+    int a[5][5];
+    int b;
 };
+
 struct t {
     int a;
     int b;
 };
 
-int * f(void * a, struct s* t, int * b) {
-    float * c;
-    void* d;
-    struct t g;
-    return &(t->a[0]);
+void main(int arg1){
+	//struct s s;
+	//s.a[2][3] = arg1;
+	int b;
+	int c[5][5];
+	b=c[3][4];
 }
-

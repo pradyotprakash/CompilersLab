@@ -1,10 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #include "symbol_table.cpp"
 using namespace std;
 
 
 #ifndef ASTH
+
+void showError(string, int);
+void showWarning(string, int);
 
 class abstract_astnode{
 public:
@@ -12,7 +16,7 @@ public:
 	string code;
 	int tempOffset;
 
-	virtual std::string gencode() = 0;
+	virtual void gencode(int) = 0;
 	
 };
 
@@ -20,7 +24,7 @@ class stmt_astnode: public abstract_astnode{
 public:
 	virtual void print(int);
 	vector<variable> declarations=vector<variable>(0);
-	virtual string gencode();
+	virtual void gencode(int);
 };
 
 class exp_astnode: public abstract_astnode{
@@ -31,7 +35,7 @@ public:
 	bool typeCasted=false;
 	bool isLocal=false, isAddress=false;
 	virtual void print(int);
-	virtual string gencode();
+	virtual void gencode(int);
 	int tempLocal;
 	type expType;
 };
@@ -39,14 +43,14 @@ public:
 class ref_astnode: public exp_astnode{
 public:
 	virtual void print(int);
-	virtual string gencode();
+	virtual void gencode(int);
 };
 
 class empty_astnode: public stmt_astnode{
 public:
 	empty_astnode();
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class seq_astnode: public stmt_astnode{
@@ -55,7 +59,7 @@ protected:
 public:
 	seq_astnode(std::vector<stmt_astnode*>);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class assign_stmt_astnode: public stmt_astnode{
@@ -64,7 +68,7 @@ protected:
 public:
 	assign_stmt_astnode(exp_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class assign_exp_astnode: public exp_astnode{
@@ -73,7 +77,7 @@ protected:
 public:
 	assign_exp_astnode(exp_astnode*, exp_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class return_astnode: public stmt_astnode{
@@ -82,7 +86,7 @@ protected:
 public:
 	return_astnode(exp_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class if_astnode: public stmt_astnode{
@@ -92,7 +96,7 @@ protected:
 public:
 	if_astnode(exp_astnode*, stmt_astnode**);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class while_astnode: public stmt_astnode{
@@ -102,7 +106,7 @@ protected:
 public:
 	while_astnode(exp_astnode*, stmt_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class for_astnode: public stmt_astnode{
@@ -112,17 +116,17 @@ protected:
 public:
 	for_astnode(exp_astnode**, stmt_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class op_astnode2: public exp_astnode{
-protected:	
+protected:
 	exp_astnode* nodes[2];
 	std::string op;
 public:
 	op_astnode2(exp_astnode**, std::string);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class op_astnode1: public exp_astnode{
@@ -132,7 +136,7 @@ protected:
 public:
 	op_astnode1(exp_astnode*, std::string);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class funcall_astnode: public exp_astnode{
@@ -141,7 +145,7 @@ class funcall_astnode: public exp_astnode{
 public:
 	funcall_astnode(std::string, std::vector<exp_astnode*>);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class floatconst_astnode: public exp_astnode{
@@ -150,7 +154,7 @@ protected:
 public:
 	floatconst_astnode(float);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class intconst_astnode: public exp_astnode{
@@ -159,7 +163,7 @@ protected:
 public:
 	intconst_astnode(int);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class stringconst_astnode: public exp_astnode{
@@ -168,25 +172,17 @@ protected:
 public:
 	stringconst_astnode(std::string);
 	void print(int);
-	string gencode();
-};
-
-class refast_astnode: public exp_astnode{
-protected:
-	ref_astnode* ref;
-public:
-	refast_astnode(ref_astnode*);
-	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class identifier_astnode: public exp_astnode{
 protected:
-	std::string name;
+	
 public:
+	std::string name;
 	identifier_astnode(std::string);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class arrayref_astnode: public exp_astnode{
@@ -196,7 +192,7 @@ protected:
 public:
 	arrayref_astnode(exp_astnode*, exp_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class pointer_astnode: public exp_astnode{
@@ -205,7 +201,7 @@ protected:
 public:
 	pointer_astnode(ref_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class deref_astnode: public exp_astnode{
@@ -214,7 +210,7 @@ protected:
 public:
 	deref_astnode(ref_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class member_astnode: public exp_astnode{
@@ -224,7 +220,7 @@ protected:
 public:
 	member_astnode(exp_astnode*, identifier_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 class arrow_astnode: public exp_astnode{
@@ -234,7 +230,7 @@ protected:
 public:
 	arrow_astnode(exp_astnode*, identifier_astnode*);
 	void print(int);
-	string gencode();
+	void gencode(int);
 };
 
 

@@ -21,6 +21,27 @@
 
 %%
 
+sp'=sp in caller; then do sp=sp - something
+RA'
+params'
+RV'
+
+temps
+locals
+sp	<--- sp points here
+RA	
+params
+RV
+
+
+
+
+
+
+
+
+
+
 function_definition
 		: type_specifier fun_declarator compound_statement
 		;

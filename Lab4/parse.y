@@ -11,7 +11,7 @@
 
 %type <EXP_ASTNODE> expression logical_and_expression equality_expression relational_expression additive_expression multiplicative_expression unary_expression postfix_expression primary_expression logical_or_expression
 
-%type <STMT_ASTNODE> compound_statement statement assignment_statement selection_statement iteration_statement
+%type <STMT_ASTNODE> compound_statement statement assignment_statement selection_statement iteration_statement function_definition
 
 %type <EXP_LIST> expression_list
 %type <STMT_LIST> statement_list
@@ -24,8 +24,12 @@
 %%
 
 // TODO
-// 1) pointer and array declaration, usage
-// 2) pointer, array, references weirdness
+// 1) How exactly to keep track of the temporary variables on the stack
+// 2) How to maintain stack pointer so as to not mess with the function calls
+// 3) Type conversions, appropriate registers and instructions for floating point operations
+// 4) Copying structs
+// 5) Boolean shortcircuiting
+// 6) If, For, While
 
 
 
@@ -53,7 +57,7 @@ struct_specifier
 				// if(isBasic(temp.vtype) && temp.vtype.base.type=="struct "+$2){
 				// 	showError("Declaring struct as member of itself");
 				// }
-				temp.offset=offset;
+				temp.offset=-offset;
 				temp.size=getSize(temp); 
 				offset+=temp.size;
 				lstr.v = temp;
@@ -78,7 +82,6 @@ function_definition
 			($2).v.size = -getSize(($2).v);
 			gst.symbols[($2).v.vname]=($2);
 
-			cout<<curFuncName<<" AST Starts Now:"<<endl;
 			hasReturn=false;
 		} 
 		compound_statement {	
@@ -101,17 +104,17 @@ function_definition
 			for(unsigned int i = 0; i<args.size(); i++){
 				localSymbolTableRow lstr;
 				variable temp = args[i];
-				temp.offset = offset;
+				temp.offset = -offset+4;
 				temp.size = getSize(temp); 
-				cerr<<temp.vname<<" seen"<<endl;
 				offset+=temp.size;
 				lstr.v=temp;
 				lst.symbols[lstr.v.vname]=lstr;
 			}
+			offset+=4;
 			for(unsigned int i = 0; i<($4)->declarations.size(); i++){
 				localSymbolTableRow lstr;
 				variable temp = ($4)->declarations[i];
-				temp.offset = offset;
+				temp.offset = -offset;
 				temp.size = getSize(temp); 
 				offset+=temp.size;
 				lstr.v=temp;
@@ -122,7 +125,17 @@ function_definition
 				showError("Function redefinition");
 			}
 			gst.symboltables[fname]=lst;
-			// TODO assign $$?
+			functions.push_back($4);
+			curFuncName=($2).v.vname;
+			tempOffsets=-gst.getTotalLocalSize("function "+($2).v.vname);
+			
+			// TODO: setup of the function after control is passed; storing $ra
+			cout<<"# setup of "<<curFuncName<<endl;
+			cout<<curFuncName<<":"<<endl;
+			cout<<"sw $ra, 4($sp)"<<endl;
+			($4)->gencode(0);
+			($$)=$4;
+
 		}
 		;
 
@@ -265,7 +278,7 @@ compound_statement
 		: '{' '}' {
 			auto temp = new seq_astnode(std::vector<stmt_astnode*>(1, new empty_astnode()));
 			//temp->print(0);
-			cout<<"\n\n\n";
+			//cout<<"\n\n\n";
 			($$)=temp;
 		}
 		| '{' {
@@ -283,7 +296,7 @@ compound_statement
 			statement_list '}' {
 			auto temp = new seq_astnode($3);
 			//temp->print(0);
-			cout<<"\n\n\n";
+			//cout<<"\n\n\n";
 			($$)=temp;
 		}
 		| '{' declaration_list {
@@ -323,7 +336,7 @@ compound_statement
 			statement_list '}' {
 				auto temp = new seq_astnode($4);
 				//temp->print(0);
-				cout<<"\n\n\n";
+				//cout<<"\n\n\n";
 				temp->declarations = $2;
 				($$)=temp;
 			}
@@ -623,12 +636,13 @@ postfix_expression
 				showError("Array index not integer", 0);
 			}
 			if(($1)->expType.sizes.size()==0){
+				// TODO: [] on pointers
 				showError("[ ] operator not defined", -1);
 			}
 			else {
-				($1)->expType.sizes.erase(($1)->expType.sizes.begin());
+				temp->expType=($1)->expType;
+				temp->expType.sizes.erase(temp->expType.sizes.begin());
 			}
-			temp->expType = ($1)->expType;
 			temp->lvalue=true;
 			($$)=temp;
 		}
