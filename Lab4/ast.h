@@ -195,23 +195,6 @@ public:
 	void gencode(int);
 };
 
-class pointer_astnode: public exp_astnode{
-protected:
-	ref_astnode* node;
-public:
-	pointer_astnode(ref_astnode*);
-	void print(int);
-	void gencode(int);
-};
-
-class deref_astnode: public exp_astnode{
-protected:
-	ref_astnode* node;
-public:
-	deref_astnode(ref_astnode*);
-	void print(int);
-	void gencode(int);
-};
 
 class member_astnode: public exp_astnode{
 protected:

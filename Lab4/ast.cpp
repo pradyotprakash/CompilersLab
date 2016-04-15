@@ -427,7 +427,32 @@ void op_astnode1::print(int l){
 }
 
 void op_astnode1::gencode(int accessType){
-	// TODO: everything
+	// TODO: ! boolean
+
+	if(op=="UMINUS"){
+		node->gencode(1);
+		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		cout<<"sub $t0, $0, $t0"<<endl;
+		tempOffsets-=4;
+		tempOffset=tempOffsets;
+		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+	}
+	if(op=="ADDRESSOF"){
+		node->gencode(2);
+		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		tempOffsets-=4;
+		tempOffset=tempOffsets;
+		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;	
+	}
+	if(op=="DEREF"){
+		node->gencode(1);
+		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		cout<<"lw $t0, 0($t0)"<<endl;
+		tempOffsets-=4;
+		tempOffset=tempOffsets;
+		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+	}
+
 }
 
 funcall_astnode::funcall_astnode(std::string n1, std::vector<exp_astnode*> n2){
@@ -449,6 +474,24 @@ void funcall_astnode::print(int l){
 
 void funcall_astnode::gencode(int accessType){
 	// TODO: everything
+	int sizet = getSize(gst.symbols["function "+funcName].v);
+
+	tempOffsets-=4; // buffer for some reason
+	tempOffset=tempOffsets;
+	tempOffsets-=sizet; // RV
+	for(auto e: nodes){
+		type t = e->expType;
+		int argsize = getSize(variable(t, "", 0, 0));
+		e->gencode(1);
+		cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
+		cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;
+		tempOffsets-=argsize; // param
+	}
+	tempOffsets-=4; // RA
+	cout<<"sw $sp, "<<tempOffsets<<"($sp)"<<endl;
+	tempOffsets-=4;
+	cout<<"jal "<<funcName<<endl;
+
 }
 
 floatconst_astnode::floatconst_astnode(float n){
@@ -548,49 +591,14 @@ void arrayref_astnode::gencode(int accessType){
 		t = getSize(variable(tempType, "", 0, 0));
 	}
 	cout<<"lw $t0, "<<offset->tempOffset<<"($sp)"<<endl;
-	cout<<"muli $t0, $t0, "<<t<<endl;
+	cout<<"addi $t1, $0, "<<t<<endl;
+	cout<<"mul $t0, $t0, $t1"<<endl;
 	cout<<"lw $t1, "<<base->tempOffset<<"($sp)"<<endl;
 	cout<<"sub $t0, $t1, $t0"<<endl;
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
 	tempOffsets -= 4;
 	tempOffset=tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
-}
-
-pointer_astnode::pointer_astnode(ref_astnode* n){
-	node=n;
-}
-
-void pointer_astnode::print(int l){
-	for(int i=0;i<l;++i)
-		cout<<' ';
-	std::cout<<"(Pointer ";
-	node->print(0);
-	std::cout<<") ";
-}
-
-void pointer_astnode::gencode(int accessType){
-	int t = node->tempOffset;
-	cout<<"lw $t0, "<<t<<"($sp)"<<endl;
-	tempOffsets-=4;
-	tempOffset=tempOffsets;
-	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
-}
-
-deref_astnode::deref_astnode(ref_astnode* n){
-	node=n;
-}
-
-void deref_astnode::print(int l){
-	for(int i=0;i<l;++i)
-		cout<<' ';
-	std::cout<<"(DEREF ";
-	node->print(0);
-	std::cout<<") ";
-}
-
-void deref_astnode::gencode(int accessType){
-
 }
 
 member_astnode::member_astnode(exp_astnode* n, identifier_astnode* i){

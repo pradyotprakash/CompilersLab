@@ -9,10 +9,26 @@ struct t {
     int b;
 };
 
-void main(int arg1){
-	//struct s s;
-	//s.a[2][3] = arg1;
+int x(){
+	return 2;
+}
+
+/*
+int main(){
 	int b;
-	int c[5][5];
-	b=c[3][4];
+	struct s c;
+	struct s* d;
+	d=&c;
+	x();
+	c.a[3][2]=4;
+	c.a[2][3]=d->a[3][2]-1;
+	d->b=17;
+	b=c.a[2][3]+c.b;
+	b=-b;
+	return b;	
+}
+*/
+
+int main(){
+	return x()+1;
 }
