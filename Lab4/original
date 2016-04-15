@@ -1,0 +1,141 @@
+%debug
+%scanner Scanner.h
+%scanner-token-function d_scanner.lex()
+
+%token VOID INT FLOAT RETURN LE_OP GE_OP EQ_OP NE_OP OR_OP AND_OP INC_OP IF ELSE WHILE FOR INT_CONSTANT FLOAT_CONSTANT STRING_LITERAL IDENTIFIER STRUCT PTR_OP
+
+%polymorphic STRING: std::string; EXP_ASTNODE: exp_astnode*; STMT_ASTNODE: stmt_astnode*; REF_ASTNODE: ref_astnode*; STMT_LIST: std::vector<stmt_astnode*>; EXP_LIST: std::vector<exp_astnode*>; INT_CONST: intconst_astnode*; FLOAT_CONST: floatconst_astnode*; STRING_LITERAL: stringconst_astnode*; IDENTIFIER_ASTNODE: identifier_astnode*; OP_ASTNODE1: op_astnode1*; OP_ASTNODE2: op_astnode2*; FUNCALL_ASTNODE: funcall_astnode*; SEQ_ASTNODE: seq_astnode*; RETURN_ASTNODE: return_astnode*; ASS_ASTNODE: ass_astnode*; IF_ASTNODE: if_astnode*; EMPTY_ASTNODE: empty_astnode*; WHILE_ASTNODE: while_astnode*; FOR_ASTNODE: for_astnode*; ARRAYREF_ASTNODE: arrayref_astnode*; POINTER_ASTNODE: pointer_astnode*; DEREF_ASTNODE: deref_astnode*; INT: int; FLOAT: float;
+
+%type <STRING> unary_operator IDENTIFIER STRING_LITERAL
+%type <INT> INT_CONSTANT
+%type <FLOAT> FLOAT_CONSTANT
+
+%type <EXP_ASTNODE> expression logical_and_expression equality_expression relational_expression additive_expression multiplicative_expression unary_expression postfix_expression primary_expression
+
+%type <STMT_ASTNODE> compound_statement statement assignment_statement selection_statement iteration_statement
+
+%type <REF_ASTNODE> l_expression
+
+%type <EXP_LIST> expression_list
+%type <STMT_LIST> statement_list
+
+%%
+
+function_definition
+		: type_specifier fun_declarator compound_statement
+		;
+
+constant_expression 
+        : INT_CONSTANT 
+        | FLOAT_CONSTANT 
+        ;
+
+compound_statement
+		: '{' '}' 
+		| '{' statement_list '}' 
+        | '{' declaration_list statement_list '}' 
+		;
+
+statement_list
+		: statement		
+        | statement_list statement	
+		;
+
+statement
+        : '{' statement_list '}'
+        | selection_statement 	
+        | iteration_statement 	
+		| assignment_statement	
+        | RETURN expression ';'	
+        ;
+
+assignment_statement
+		: ';' 								
+		|  l_expression '=' expression ';'	
+		;
+
+expression
+		: logical_and_expression
+        | expression OR_OP logical_and_expression
+		;
+
+logical_and_expression
+        : equality_expression
+        | logical_and_expression AND_OP equality_expression 
+		;
+
+equality_expression
+		: relational_expression 
+        | equality_expression EQ_OP relational_expression 	
+		| equality_expression NE_OP relational_expression
+		;
+	
+relational_expression
+		: additive_expression
+        | relational_expression '<' additive_expression 
+		| relational_expression '>' additive_expression 
+		| relational_expression LE_OP additive_expression 
+        | relational_expression GE_OP additive_expression 
+		;
+
+additive_expression 
+		: multiplicative_expression
+		| additive_expression '+' multiplicative_expression 
+		| additive_expression '-' multiplicative_expression 
+		;
+
+multiplicative_expression
+		: unary_expression
+		| multiplicative_expression '*' unary_expression 
+		| multiplicative_expression '/' unary_expression 
+		;
+
+unary_expression
+		: postfix_expression  				
+		| unary_operator postfix_expression 
+		;
+
+postfix_expression
+		: primary_expression  				
+	    | IDENTIFIER '(' ')' 				
+		| IDENTIFIER '(' expression_list ')' 
+		| l_expression INC_OP 				
+		;
+
+primary_expression
+		: l_expression
+        | l_expression '=' expression   
+        | INT_CONSTANT 
+		| FLOAT_CONSTANT
+        | STRING_LITERAL
+		| '(' expression ')' 	
+		;
+
+l_expression
+        : IDENTIFIER
+        | l_expression '[' expression ']' 	
+        | '*' l_expression
+        | '&' l_expression // & and * are similar
+        | l_expression '.' IDENTIFIER
+        | l_expression PTR_OP IDENTIFIER	
+        ;
+
+expression_list
+        : expression
+        | expression_list ',' expression
+		;
+
+unary_operator
+        : '-'	
+		| '!' 	
+		;
+
+selection_statement
+        : IF '(' expression ')' statement ELSE statement 
+		;
+
+iteration_statement
+		: WHILE '(' expression ')' statement 	
+		| FOR '(' expression ';' expression ';' expression ')' statement  //modified this production
+        ;
+
