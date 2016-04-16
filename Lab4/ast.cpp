@@ -156,6 +156,15 @@ void unaryTypeCheck(type t1, exp_astnode* e){
 	//if(e->expType.base.type=="void") showError("Incompatible type!");
 }
 
+void copyStruct(int s){
+	// assumes destination in $t0, source in $t1
+	for(int i=0; i<s; i+=4){
+		int x = -i;
+		cout<<"lw $t2 "<<x<<"($t1)"<<endl;
+		cout<<"sw $t2 "<<x<<"($t0)"<<endl;
+	}
+}
+
 void stmt_astnode::print(int l){
 	std::cout<<"This should never be called; stmt_astnode"<<std::endl;
 }

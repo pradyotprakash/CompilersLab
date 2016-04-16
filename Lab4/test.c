@@ -5,6 +5,7 @@ struct s {
 };
 
 struct t {
+	struct s q;
     int a;
     int b;
 };
@@ -37,9 +38,9 @@ int g(int x){
 // }
 
 int main(){
+	struct t p;
 	int* x;
-	int b;
-	x=&b;
+	x=&(p.q.c);
 	*x=5;
-	return f(x) + g(*x);	
+	return f(x) + g(p.q.c);	
 }
