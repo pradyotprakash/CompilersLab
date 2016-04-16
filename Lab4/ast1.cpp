@@ -209,7 +209,6 @@ void seq_astnode::print(int l){
 }
 
 void seq_astnode::gencode(int accessType){
-	tempOffsets -= 4;
 	for(unsigned int i=0; i<nodes.size(); i++){
 		int defaultOffset = tempOffsets;
 		nodes[i]->gencode(0);
@@ -245,6 +244,7 @@ void assign_exp_astnode::print(int l){
 	if(r->typeCasted) cout<<"(to_"+r->expType.base.type<<" ";
 	r->print(0);
 	if(r->typeCasted) cout<<") ";
+	
 	std::cout<<")\n";
 }
 
@@ -287,6 +287,7 @@ void return_astnode::gencode(int accessType){
 	cout<<"lw $ra, 4($sp)"<<endl;
 	cout<<"lw $sp, 0($sp)"<<endl;
 	cout<<"jr $ra"<<endl;
+
 }
 
 if_astnode::if_astnode(exp_astnode* n1, stmt_astnode** n2){
@@ -405,8 +406,8 @@ void op_astnode2::gencode(int accessType){
 	else if(op == "DIV"){
 		cout<<"div $t0, $t0, $t1"<<endl;
 	}
-	tempOffset = tempOffsets;
 	tempOffsets -= 4;
+	tempOffset = tempOffsets;
 	cout<<"# store the value back into memory"<<endl;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 
@@ -432,23 +433,23 @@ void op_astnode1::gencode(int accessType){
 		node->gencode(1);
 		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
 		cout<<"sub $t0, $0, $t0"<<endl;
-		tempOffset=tempOffsets;
 		tempOffsets-=4;
+		tempOffset=tempOffsets;
 		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 	}
 	if(op=="ADDRESSOF"){
 		node->gencode(2);
 		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
-		tempOffset=tempOffsets;
 		tempOffsets-=4;
+		tempOffset=tempOffsets;
 		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;	
 	}
 	if(op=="DEREF"){
 		node->gencode(1);
 		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
-		if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
-		tempOffset=tempOffsets;
+		cout<<"lw $t0, 0($t0)"<<endl;
 		tempOffsets-=4;
+		tempOffset=tempOffsets;
 		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 	}
 
@@ -475,28 +476,28 @@ void funcall_astnode::gencode(int accessType){
 	// TODO: everything
 	int sizet = getSize(gst.symbols[funcName].v);
 	
-	// tempOffsets-=4; // buffer for some reason
-	for(auto e: nodes){
-		e->gencode(1);
-	}
-
+	// cerr<<tempOffsets<<endl;
+	tempOffsets-=4; // buffer for some reason
+	// cerr<<tempOffsets<<endl;
 	tempOffset=tempOffsets;
 	tempOffsets-=sizet; // RV
-	
 	for(auto e: nodes){
 		type t = e->expType;
-		// tempOffsets-=4; // buffer
+		tempOffsets-=4; // buffer
 		int argsize = getSize(variable(t, "", 0, 0));
+		cerr<<argsize<<"v"<<endl;
+		e->gencode(1);
 		cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
 		cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;
 		tempOffsets-=argsize; // param
 	}
-	tempOffsets-=4; // RA
+	tempOffsets-=8; // RA
 	
 	cout<<"sw $sp, "<<tempOffsets<<"($sp)"<<endl;
 	cout<<"addi $sp, $sp, "<<tempOffsets<<endl;
-	//tempOffsets-=4;
+	tempOffsets-=4;
 	cout<<"jal "<<funcName<<endl;
+
 }
 
 floatconst_astnode::floatconst_astnode(float n){
@@ -526,8 +527,8 @@ void intconst_astnode::print(int l){
 void intconst_astnode::gencode(int accessType){
 	cout<<"# loading intconst"<<endl;
 	cout<<"addi $t0, $0, "<<val<<endl;
-	tempOffset = tempOffsets;
 	tempOffsets-=4;
+	tempOffset = tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
@@ -563,8 +564,8 @@ void identifier_astnode::gencode(int accessType){
 	}
 	cout<<"addi $t0, $sp, "<<variableOffset<<endl;
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
-	tempOffset=tempOffsets;
 	tempOffsets-=4;
+	tempOffset=tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;		
 }
 
@@ -601,8 +602,8 @@ void arrayref_astnode::gencode(int accessType){
 	cout<<"lw $t1, "<<base->tempOffset<<"($sp)"<<endl;
 	cout<<"sub $t0, $t1, $t0"<<endl;
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
-	tempOffset=tempOffsets;
 	tempOffsets -= 4;
+	tempOffset=tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
@@ -630,8 +631,8 @@ void member_astnode::gencode(int accessType){
 	cout<<"sw $t0, "<<node->tempOffset<<"($sp)"<<endl;
 	cout<<"addi $t0, $t0, "<<varOffset<<endl;
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
-	tempOffset=tempOffsets;
 	tempOffsets-=4;
+	tempOffset=tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
@@ -659,8 +660,8 @@ void arrow_astnode::gencode(int accessType){
 	cout<<"sw $t0, "<<node->tempOffset<<"($sp)"<<endl;
 	cout<<"addi $t0, $t0, "<<varOffset<<endl;
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
-	tempOffset=tempOffsets;
 	tempOffsets-=4;
+	tempOffset=tempOffsets;
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 

@@ -34,14 +34,6 @@ params
 RV
 
 
-
-
-
-
-
-
-
-
 function_definition
 		: type_specifier fun_declarator compound_statement
 		;

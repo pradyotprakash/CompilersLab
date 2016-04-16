@@ -24,12 +24,11 @@
 %%
 
 // TODO
-// 1) How exactly to keep track of the temporary variables on the stack
-// 2) How to maintain stack pointer so as to not mess with the function calls
-// 3) Type conversions, appropriate registers and instructions for floating point operations
-// 4) Copying structs: assignment, return, function args
-// 5) Boolean shortcircuiting
-// 6) If, For, While
+
+// 1) Type conversions, appropriate registers and instructions for floating point operations
+// 2) Copying structs: assignment, return, function args
+// 3) Boolean shortcircuiting
+// 4) If, For, While
 
 
 
