@@ -14,6 +14,12 @@ globalSymbolTable gst;
 
 vector<stmt_astnode*> functions;
 
+int labelsAllotted=0;
+
+string getLabel(){
+	return "L"+(labelsAllotted++);
+}
+
 int getSize(variable v){
 	string type = v.vtype.base.type;
 	int baseSize=0;
@@ -50,6 +56,7 @@ void showError(string s, int lineNumber = -1){
 }
 
 void showWarning(string s, int lineNumber = -1){
+
 	cerr<<"Warning in line number: "<<lineno<<": "<<s<<endl;
 }
 
@@ -221,7 +228,7 @@ void seq_astnode::gencode(int accessType){
 	tempOffsets -= 4;
 	for(unsigned int i=0; i<nodes.size(); i++){
 		int defaultOffset = tempOffsets;
-		nodes[i]->gencode(0);
+		nodes[i]->gencode(1);
 		tempOffsets=defaultOffset;
 	}
 }
@@ -237,7 +244,7 @@ void assign_stmt_astnode::print(int l){
 }
 
 void assign_stmt_astnode::gencode(int accessType){
-	r->gencode(0);
+	r->gencode(1);
 }
 
 assign_exp_astnode::assign_exp_astnode(exp_astnode* n1, exp_astnode* n2){
@@ -404,8 +411,9 @@ void op_astnode2::gencode(int accessType){
 	cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
 	
 	cout<<"# generate op code"<<endl;
-	if(op == "PLUS")
+	if(op == "PLUS"){
 		cout<<"add $t0, $t0, $t1"<<endl;
+	}
 	else if(op == "MINUS")
 		cout<<"sub $t0, $t0, $t1"<<endl;
 	else if(op == "MULT"){
@@ -414,6 +422,35 @@ void op_astnode2::gencode(int accessType){
 	else if(op == "DIV"){
 		cout<<"div $t0, $t0, $t1"<<endl;
 	}
+	else if(op=="LT"){
+		cout<<"slt $t0, $t0, $t1"<<endl;
+	}
+	else if(op=="GT"){
+		cout<<"slt $t0, $t1, $t0"<<endl;
+	}
+	else if(op=="LE_OP"){
+		cout<<"slt $t0, $t1, $t0"<<endl;
+		cout<<"addi $t1, $0, 1"<<endl;
+		cout<<"sub $t0, $t1, $t0"<<endl;
+	}
+	else if(op=="GE_OP"){
+		cout<<"slt $t0, $t0, $t1"<<endl;
+		cout<<"addi $t1, $0, 1"<<endl;
+		cout<<"sub $t0, $t1, $t0"<<endl;
+	}
+	else if(op=="EQ_OP"){
+		cout<<"sub $t2, $t0, $t1"<<endl;
+		cout<<"addi $t1, $0, 1"<<endl;
+		cout<<"add $t0, $0, $0"<<endl;
+		cout<<"movz $t0, $t1, $t2"<<endl;
+	}
+	else if(op=="NE_OP"){
+		cout<<"sub $t2, $t0, $t1"<<endl;
+		cout<<"addi $t1, $0, 0"<<endl;
+		cout<<"addi $t0, $0, 1"<<endl;
+		cout<<"movz $t0, $t1, $t2"<<endl;	
+	}
+
 	tempOffset = tempOffsets;
 	tempOffsets -= 4;
 	cout<<"# store the value back into memory"<<endl;
@@ -460,6 +497,26 @@ void op_astnode1::gencode(int accessType){
 		tempOffsets-=4;
 		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 	}
+	if(op=="NOT"){
+		node->gencode(1);
+		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		tempOffset=tempOffsets;
+		cout<<"addi $t1, $0, 0"<<endl;
+		cout<<"addi $t2, $0, 1"<<endl;
+		cout<<"movz $t1, $t2, $t0"<<endl;
+		tempOffsets-=4;
+		cout<<"sw $t1, "<<tempOffset<<"($sp)"<<endl;			
+	}
+	if(op=="PP"){
+		node->gencode(2);
+		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		tempOffset=tempOffsets;
+		cout<<"lw $t1, 0($t0)"<<endl;
+		cout<<"addi $t2, $t1, 1"<<endl;
+		cout<<"sw $t2, 0($t0)"<<endl;
+		tempOffsets-=4;
+		cout<<"sw $t1, "<<tempOffset<<"($sp)"<<endl;			
+	}
 
 }
 
@@ -481,7 +538,15 @@ void funcall_astnode::print(int l){
 }
 
 void funcall_astnode::gencode(int accessType){
-	// TODO: everything
+	if(funcName=="printf"){
+		nodes[0]->gencode(1);
+		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+		cout<<"li $v0, 1"<<endl;
+		cout<<"add $a0, $0, $t0"<<endl;
+		cout<<"syscall"<<endl;
+		return;
+	}
+
 	int sizet = getSize(gst.symbols[funcName].v);
 	
 	// tempOffsets-=4; // buffer for some reason

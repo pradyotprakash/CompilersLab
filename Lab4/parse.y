@@ -29,6 +29,9 @@
 // 2) Copying structs: assignment, return, function args
 // 3) Boolean shortcircuiting
 // 4) If, For, While
+// 5) Arrays passing as argument
+// 6) printf
+// 7) - and ++ and !
 
 
 

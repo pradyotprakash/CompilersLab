@@ -3,24 +3,24 @@
 "\n"			lineno++;
 [ \t] 			// skip
 
-void 			return Parser::VOID;
-int				return Parser::INT;
-float 			return Parser::FLOAT;
+void 			return Parser::VOID;	//
+int				return Parser::INT;		//
+float 			return Parser::FLOAT;	//
 
-return			return Parser::RETURN;
-"<="			return Parser::LE_OP;
-">="			return Parser::GE_OP;
-"=="			return Parser::EQ_OP;
-"!="			return Parser::NE_OP;
+return			return Parser::RETURN;	//
+"<="			return Parser::LE_OP;	// 
+">="			return Parser::GE_OP;	//
+"=="			return Parser::EQ_OP;	//
+"!="			return Parser::NE_OP;	//
 "||"			return Parser::OR_OP;
 "&&"			return Parser::AND_OP;
-"++"			return Parser::INC_OP;
+"++"			return Parser::INC_OP;	//
 if 				return Parser::IF;
 else			return Parser::ELSE;
 while			return Parser::WHILE;
 for				return Parser::FOR;
-struct 			return Parser::STRUCT;
-"->"			return Parser::PTR_OP;
+struct 			return Parser::STRUCT;	//
+"->"			return Parser::PTR_OP;	//
 
 "//".*"\n"	    lineno++;
 

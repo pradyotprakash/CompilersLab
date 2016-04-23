@@ -136,6 +136,18 @@ public:
 	map<string, globalSymbolTableRow> symbols;
 	set<string> structsDefined;
 	map<std::string, localSymbolTable> symboltables; // should be used for structs and function bodies
+	
+	globalSymbolTable(){
+		globalSymbolTableRow printfrow;
+
+		printfrow.isFunction=true;
+		printfrow.v=variable(type(baseType("void", 0), vector<int>(0)), "printf", 0, 0);
+		printfrow.args=vector<variable>(1, variable(type(baseType("int", 0), vector<int>(0)), "toPrint", 0, 0));
+
+		symbols["printf"]=printfrow;
+
+	}
+
 	void print(){
 
 		cout<<"Global symbol table:"<<endl;

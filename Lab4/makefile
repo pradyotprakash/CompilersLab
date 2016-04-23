@@ -1,6 +1,8 @@
 all: clean    Scanner.ih Scanner.h Scannerbase.h lex.cc parse.cc main.cc Parser.h Parserbase.h Parser.ih
 	g++ -g --std=c++0x lex.cc parse.cc main.cc -o parser
 	./parser < test.c > test.s
+	@spim -file "test.s" | tail -n 1
+	@echo ""
 
         
 Scanner.ih: lex.l

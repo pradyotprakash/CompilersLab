@@ -16,7 +16,7 @@ int main (int argc, char** arg)
   if(gst.symbols.find("main")==gst.symbols.end()){
   	showWarning("Main has not been defined", 0);
   }
-  gst.print();
+  //gst.print();
 }
 
 
