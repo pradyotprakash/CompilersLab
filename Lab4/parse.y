@@ -611,6 +611,10 @@ postfix_expression
 			($$)=temp;
 		}
 		| IDENTIFIER '(' {
+
+				// push existing parameterTypes on stack
+				parameterStack.push(parameterTypes);
+
 				parameterTypes.clear();
 				if(gst.symbols.find($1)==gst.symbols.end()){
 					showError("Function not defined");
@@ -625,6 +629,10 @@ postfix_expression
 				if(parameterTypes.size()!=0){
 					showError("Incorrect number of arguments");
 				}
+				// pop from stack
+				parameterTypes = parameterStack.top();
+				parameterStack.pop();
+
 				($$)=temp;
 			}
 		| postfix_expression '[' expression ']' {
@@ -633,13 +641,15 @@ postfix_expression
 			if(t.base.type != "int" || t.base.pointers!=0 || t.sizes.size()!=0){
 				showError("Array index not integer", 0);
 			}
-			if(($1)->expType.sizes.size()==0){
+			if(($1)->expType.sizes.size()==0 && ($1)->expType.base.pointers==0){
 				// TODO: [] on pointers
 				showError("[ ] operator not defined", -1);
 			}
 			else {
 				temp->expType=($1)->expType;
-				temp->expType.sizes.erase(temp->expType.sizes.begin());
+				if(temp->expType.sizes.size()!=0)
+					temp->expType.sizes.erase(temp->expType.sizes.begin());
+				else temp->expType.base.pointers--;
 			}
 			temp->lvalue=true;
 			($$)=temp;
@@ -709,7 +719,7 @@ postfix_expression
 expression_list
 		: expression {
 			if(parameterTypes.size()==0){
-				showError("Incorrect number of arguments", -1); // TODO
+				showError("asdadIncorrect number of arguments", -1); // TODO
 			}
 			else{
 				unaryTypeCheck(parameterTypes[0], $1);

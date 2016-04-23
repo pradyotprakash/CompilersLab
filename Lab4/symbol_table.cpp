@@ -146,6 +146,18 @@ public:
 
 		symbols["printf"]=printfrow;
 
+		globalSymbolTableRow printrow;
+		printrow.isFunction=true;
+		printrow.v=variable(type(baseType("void", 0), vector<int>(0)), "print", 0, 0);
+		printrow.args=vector<variable>(0);
+
+		symbols["print"]=printrow;
+
+		cout<<".data"<<endl;
+		cout<<"space: .asciiz \"\\n\""<<endl;
+		cout<<".text"<<endl;
+		
+
 	}
 
 	void print(){

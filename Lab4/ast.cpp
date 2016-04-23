@@ -1,10 +1,12 @@
 #include <typeinfo>
 #include "ast.h"
+#include <stack>
 #ifndef ASTCPP
 
 string curFuncName;
 localSymbolTable curLocal;
 vector<type> parameterTypes;
+stack<vector<type> > parameterStack;
 string curStruct;
 bool hasReturn;
 
@@ -15,6 +17,9 @@ globalSymbolTable gst;
 vector<stmt_astnode*> functions;
 
 int labelsAllotted=0;
+
+
+
 
 string getLabel(){
 
@@ -615,6 +620,12 @@ void funcall_astnode::gencode(int accessType){
 		cout<<"add $a0, $0, $t0"<<endl;
 		cout<<"syscall"<<endl;
 		return;
+	}
+	if(funcName=="print"){
+		cout<<"addi $v0, $0, 4"<<endl;
+		cout<<"la $a0, space"<<endl;
+		cout<<"syscall"<<endl;
+        return;
 	}
 
 	int sizet = getSize(gst.symbols[funcName].v);
