@@ -1,11 +1,8 @@
 int main(){
-	int a,b,c;
-	a=1;
-	b=2;
-	c=(a<b);
-	printf(c);
-	a=2;
-	c= !a;
-	printf(c);
+	int x;
+	
+	for(x=0; x<10; x++){
+		printf(x);
+	}
 	return 0;
 }

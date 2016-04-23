@@ -17,7 +17,9 @@ vector<stmt_astnode*> functions;
 int labelsAllotted=0;
 
 string getLabel(){
-	return "L"+(labelsAllotted++);
+
+	string s = "LABEL"+to_string(labelsAllotted++);
+	return s;
 }
 
 int getSize(variable v){
@@ -182,18 +184,22 @@ void stmt_astnode::gencode(int accessType){
 }
 
 void exp_astnode::print(int l){
+
 	std::cout<<"This should never be called; exp_astnode"<<std::endl;
 }
 
 void exp_astnode::gencode(int accessType){
+
 	std::cout<<"This should never be called; gencode exp_astnode"<<std::endl;
 }
 
 void ref_astnode::print(int l){
+
 	std::cout<<"This should never be called; ref_astnode"<<std::endl;
 }
 
 void ref_astnode::gencode(int accessType){
+
 	std::cout<<"This should never be called; gencode ref_astnode"<<std::endl;
 }
 
@@ -212,6 +218,7 @@ void empty_astnode::gencode(int accessType){
 }
 
 seq_astnode::seq_astnode(std::vector<stmt_astnode*> n){
+
     nodes = n;
 }
 
@@ -325,6 +332,18 @@ void if_astnode::print(int l){
 
 void if_astnode::gencode(int accessType){
 	// TODO: everything
+	node->gencode(1);
+	string label1 = getLabel();
+	string label2 = getLabel();
+
+	cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+	cout<<"beq $t0, $0, "<<label1<<endl;
+	nodes[0]->gencode(1);
+	cout<<"j "<<label2<<endl;
+	cout<<label1<<":"<<endl;
+	nodes[1]->gencode(1);
+	cout<<label2<<":"<<endl;
+
 }
 
 while_astnode::while_astnode(exp_astnode* n1, stmt_astnode* n2){
@@ -343,7 +362,17 @@ void while_astnode::print(int l){
 }
 
 void while_astnode::gencode(int accessType){
-	// TODO: everything
+	
+	string label1 = getLabel();
+	string label2 = getLabel();
+	cout<<label1<<":";
+	node->gencode(1);
+	cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+	cout<<"beq $t0, $0, "<<label2<<endl;
+	node2->gencode(1);
+	cout<<"j "<<label1<<endl;
+	cout<<label2<<":"<<endl;
+
 }
 
 for_astnode::for_astnode(exp_astnode** n1, stmt_astnode* n2){
@@ -366,7 +395,17 @@ void for_astnode::print(int l){
 }
 
 void for_astnode::gencode(int accessType){
-	// TODO: everything
+	string label1=getLabel(), label2=getLabel();
+	nodes[0]->gencode(1);
+	cout<<label1<<":"<<endl;
+	nodes[1]->gencode(1);
+	cout<<"lw $t0, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+	cout<<"beq $t0, $0, "<<label2<<endl;
+	node->gencode(1);
+	nodes[2]->gencode(1);
+	cout<<"j "<<label1<<endl;
+	cout<<label2<<":"<<endl;
+
 }
 
 op_astnode2::op_astnode2(exp_astnode** n1, std::string n2){
@@ -402,7 +441,39 @@ void op_astnode2::print(int l){
 }
 
 void op_astnode2::gencode(int accessType){
-	// TODO: type casting, boolean!
+	// TODO: type casting
+
+	if(op=="AND"){
+		nodes[0]->gencode(1);
+		string label = getLabel();
+		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+		cout<<"beq $t0, $0, "<<label<<endl;
+		nodes[1]->gencode(1);
+		cout<<label<<":"<<endl;
+		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+		cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+		cout<<"and $t0, $t0, $t1"<<endl;
+		tempOffset = tempOffsets;
+		tempOffsets -= 4;
+		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+		return;		
+	}
+
+	if(op=="OR"){
+		nodes[0]->gencode(1);
+		string label = getLabel();
+		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+		cout<<"bne $t0, $0, "<<label<<endl;
+		nodes[1]->gencode(1);
+		cout<<label<<":"<<endl;
+		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+		cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+		cout<<"or $t0, $t0, $t1"<<endl;
+		tempOffset = tempOffsets;
+		tempOffsets -= 4;
+		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+		return;		
+	}
 
 	nodes[0]->gencode(1);
 	nodes[1]->gencode(1);
@@ -472,7 +543,6 @@ void op_astnode1::print(int l){
 }
 
 void op_astnode1::gencode(int accessType){
-	// TODO: ! boolean
 
 	if(op=="UMINUS"){
 		node->gencode(1);

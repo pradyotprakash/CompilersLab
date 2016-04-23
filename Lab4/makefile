@@ -4,6 +4,11 @@ all: clean    Scanner.ih Scanner.h Scannerbase.h lex.cc parse.cc main.cc Parser.
 	@spim -file "test.s" | tail -n 1
 	@echo ""
 
+test:
+	./parser < test.c > test.s
+	@spim -file "test.s" | tail -n 1
+	@echo ""
+
         
 Scanner.ih: lex.l
 	if [ ! -e Scanner.ih ]; then \
