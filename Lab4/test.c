@@ -1,37 +1,55 @@
+// int main(){
+// 	float a[5], temp;
+// 	int i,j;
+
+// 	a[0]=5;
+// 	a[1]=1;
+// 	a[2]=3.0;
+// 	a[3]=3.1;
+// 	a[4]=2.1;
+
+// 	for(i=0;i<5;i++){
+// 		for(j=i+1;j<5;j++){
+// 			if(a[i] > a[j]){
+// 				temp=a[i];
+// 				a[i]=a[j];
+// 				a[j]=temp;
+// 			}
+// 			else ;
+// 		}
+// 	}
+
+// 	for(i=0;i<5;i++){
+// 		printf(a[i]);
+// 	}
+// 	return 0;
+// }
+
+// float func(int x){
+// 	float begin, end, mid;
+// 	int i;
+// 	i=0;
+// 	begin=0;
+// 	end=x;
+// 	while(i<10000){
+// 		mid=(begin+end)/2;
+// 		if(mid*mid < x){
+// 			begin=mid;
+// 		}
+// 		else{
+// 			end=mid;
+// 		}
+// 		i++;
+// 	}
+// 	return mid;
+// }
+
+void f(int b){
+	b++;
+	print(b);
+}
 
 int main(){
-
-	int array[10];
-	int i, j, temp;
-
-	array[0]=5;
-	array[1]=6;
-	array[2]=7;
-	array[3]=1;
-	array[4]=-7;
-	array[5]=0;
-	array[6]=12;
-	array[7]=9;
-	array[8]=2;
-	array[9]=-3;
-
-	for(i=0; i<10; i++){
-		for(j=i+1; j<10; j++){
-			if(array[i]>array[j]){
-				temp=array[i];
-				array[i]=array[j];
-				array[j]=temp;
-			}
-			else{
-				;
-			}
-		}
-	}
-
-	for(i=0; i<10; i++){
-		printf(array[i]);
-		print();
-	}
+	f(1.3);
 	return 0;
-	
 }

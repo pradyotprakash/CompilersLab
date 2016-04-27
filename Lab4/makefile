@@ -1,3 +1,5 @@
+.PHONY: clean test all
+
 all: clean    Scanner.ih Scanner.h Scannerbase.h lex.cc parse.cc main.cc Parser.h Parserbase.h Parser.ih
 	g++ -g --std=c++0x lex.cc parse.cc main.cc -o parser
 	@./parser < test.c > test.s
@@ -24,7 +26,7 @@ parse.cc Parser.h Parserbase.h Parser.ih: parse.y
 	sed -i '/include "Parser.ih"/a #include "ast.cpp"' parse.cc;
 	sed -i '\|void Parser::print__()| i Meta__::SType ParserBase::d_val__; ' parse.cc
 
-.PHONY: clean     
+
 clean:
 	$(RM) -f Parser.ih Parser.h Parserbase.h parse.cc Scanner.ih Scanner.h Scannerbase.h lex.cc a.out graph.ps junk *~ parse.y.output parser ast.h.gch ast.o symbol_table.o
 	

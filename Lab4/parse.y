@@ -62,8 +62,10 @@ struct_specifier
 				lst.symbols[lstr.v.vname] = lstr;
 			}
 			string sname = "struct "+$2;
-			if(gst.symboltables.find(sname)!=gst.symboltables.end())
+			if(gst.symboltables.find(sname)!=gst.symboltables.end()){
+				if(sname != curStruct)
 				showError("Struct redeclaration");
+			}
 			gst.symboltables[sname]=lst;
 			curStruct = "";
 			gst.structsDefined.insert(sname);
@@ -129,8 +131,12 @@ function_definition
 			
 			// TODO: setup of the function after control is passed; storing $ra
 			cout<<"# setup of "<<curFuncName<<endl;
+			if(curFuncName!="main")
+				cout<<"F_";
 			cout<<curFuncName<<":"<<endl;
 			cout<<"sw $ra, 4($sp)"<<endl;
+			($4)->isFunction=true;
+			
 			($4)->gencode(0);
 			($$)=$4;
 
@@ -191,6 +197,7 @@ fun_declarator
 		gstr.v = v;
 		gstr.args.clear();
 		$$ = gstr;
+		
 	}
 	| '*' fun_declarator {
 		($2).v.vtype.base.pointers++;
@@ -395,12 +402,14 @@ expression
 			if(($1)->expType.sizes.size()!=0){
 				showError("Whole array assignments not allowed!");
 			}
-			unaryTypeCheck(($1)->expType, $3);
+			exp_astnode *e = $3;
+			unaryTypeCheck(($1)->expType, e);
 			if(!($1)->lvalue){
 				showError("Cannot assign a value to a non-lvalue");	
 			}
-			$$ = new assign_exp_astnode($1, $3);
-			
+			auto v = new assign_exp_astnode($1, e);
+			v->expType = ($1)->expType;
+			$$ = v;
 		};
 
 logical_or_expression			// The usual hierarchy that starts here...

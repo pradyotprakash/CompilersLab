@@ -25,6 +25,7 @@ public:
 	virtual void print(int);
 	vector<variable> declarations=vector<variable>(0);
 	virtual void gencode(int);
+	bool isFunction=false;
 };
 
 class exp_astnode: public abstract_astnode{
@@ -60,6 +61,7 @@ public:
 	seq_astnode(std::vector<stmt_astnode*>);
 	void print(int);
 	void gencode(int);
+	
 };
 
 class assign_stmt_astnode: public stmt_astnode{
