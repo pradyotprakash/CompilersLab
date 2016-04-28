@@ -1,12 +1,18 @@
 #include <typeinfo>
 #include "ast.h"
 #include <stack>
+#include <map>
 #ifndef ASTCPP
 
 string curFuncName;
 localSymbolTable curLocal;
 vector<type> parameterTypes;
 stack<vector<type> > parameterStack;
+bool isPrintf;
+stack<bool> isPrintfStack;
+
+map<int, string> globalStrings;
+int sid=0;
 string curStruct;
 bool hasReturn;
 
@@ -17,9 +23,6 @@ globalSymbolTable gst;
 vector<stmt_astnode*> functions;
 
 int labelsAllotted=0;
-
-
-
 
 string getLabel(){
 
@@ -533,11 +536,123 @@ void op_astnode2::print(int l){
 void op_astnode2::gencode(int accessType){
 	// TODO: type casting
 	if(nodes[0]->typeCasted || nodes[1]->typeCasted || nodes[0]->expType.base.type=="float" || nodes[1]->expType.base.type=="float"){
-		
+
 		// since in op_astnode2, so the cast must have
 		// promoted the type of the variable to float
 		
 		// both base types would be the same here
+		if(op=="AND"){
+			nodes[0]->gencode(1);
+			string label = getLabel();
+			string l1 = getLabel();
+			string l2 = getLabel();
+			string l3 = getLabel();
+			string l4 = getLabel();
+
+			if(nodes[0]->typeCasted){
+				cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+				cout<<"mtc1 $t0, $f0"<<endl;
+				cout<<"cvt.s.w $f0, $f0"<<endl;
+			}
+			else{
+				cout<<"l.s $f0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+			}
+
+			cout<<"li.s $f2, 0.0"<<endl;
+			cout<<"c.eq.s $f0, $f2"<<endl;
+			cout<<"bc1t "<<l1<<endl;
+			cout<<"addi $t0, $0, 1"<<endl;
+			cout<<"j "<<l2<<endl;
+			cout<<l1<<":"<<endl;
+			cout<<"addi $t0, $0, 0"<<endl;
+			cout<<l2<<":"<<endl;
+
+			cout<<"beq $t0, $0, "<<label<<endl;
+
+			nodes[1]->gencode(1);			
+			if(nodes[1]->typeCasted){
+				cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+				cout<<"mtc1 $t1, $f1"<<endl;
+				cout<<"cvt.s.w $f1, $f1"<<endl;
+			}
+			else{
+				cout<<"l.s $f1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+			}
+
+			cout<<"li.s $f2, 0.0"<<endl;
+			cout<<"c.eq.s $f1, $f2"<<endl;
+			cout<<"bc1t "<<l3<<endl;
+			cout<<"addi $t1, $0, 1"<<endl;
+			cout<<"j "<<l4<<endl;
+			cout<<l3<<":"<<endl;
+			cout<<"addi $t1, $0, 0"<<endl;
+			cout<<l4<<":"<<endl;
+
+			cout<<label<<":"<<endl;
+			cout<<"and $t0, $t0, $t1"<<endl;
+			tempOffset = tempOffsets;
+			tempOffsets -= 4;
+			cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+			return;		
+		}
+
+		if(op=="OR"){
+			nodes[0]->gencode(1);
+			string label = getLabel();
+			string l1 = getLabel();
+			string l2 = getLabel();
+			string l3 = getLabel();
+			string l4 = getLabel();
+
+			if(nodes[0]->typeCasted){
+				cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+				cout<<"mtc1 $t0, $f0"<<endl;
+				cout<<"cvt.s.w $f0, $f0"<<endl;
+			}
+			else{
+				cout<<"l.s $f0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
+			}
+
+			cout<<"li.s $f2, 0.0"<<endl;
+			cout<<"c.eq.s $f0, $f2"<<endl;
+			cout<<"bc1t "<<l1<<endl;
+			cout<<"addi $t0, $0, 1"<<endl;
+			cout<<"j "<<l2<<endl;
+			cout<<l1<<":"<<endl;
+			cout<<"addi $t0, $0, 0"<<endl;
+			cout<<l2<<":"<<endl;
+
+			cout<<"bne $t0, $0, "<<label<<endl;
+
+			nodes[1]->gencode(1);			
+			if(nodes[1]->typeCasted){
+				cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+				cout<<"mtc1 $t1, $f1"<<endl;
+				cout<<"cvt.s.w $f1, $f1"<<endl;
+			}
+			else{
+				cout<<"l.s $f1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
+			}
+
+			cout<<"li.s $f2, 0.0"<<endl;
+			cout<<"c.eq.s $f1, $f2"<<endl;
+			cout<<"bc1t "<<l3<<endl;
+			cout<<"addi $t1, $0, 1"<<endl;
+			cout<<"j "<<l4<<endl;
+			cout<<l3<<":"<<endl;
+			cout<<"addi $t1, $0, 0"<<endl;
+			cout<<l4<<":"<<endl;
+
+			cout<<label<<":"<<endl;
+			cout<<"or $t0, $t0, $t1"<<endl;
+			cout<<"addi $t3, $0, 1"<<endl;
+			cout<<"movn $t0, $t3, $t0"<<endl;
+			tempOffset = tempOffsets;
+			tempOffsets -= 4;
+			cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+			return;		
+		}
+
 		nodes[0]->gencode(1);
 		nodes[1]->gencode(1);
 				
@@ -681,6 +796,8 @@ void op_astnode2::gencode(int accessType){
 		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
 		cout<<"lw $t1, "<<nodes[1]->tempOffset<<"($sp)"<<endl;
 		cout<<"or $t0, $t0, $t1"<<endl;
+		cout<<"addi $t3, $0, 1"<<endl;
+		cout<<"movn $t0, $t3, $t0"<<endl;
 		tempOffset = tempOffsets;
 		tempOffsets -= 4;
 		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;

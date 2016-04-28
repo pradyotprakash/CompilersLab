@@ -76,7 +76,7 @@ struct_specifier
 function_definition
 	: type_specifier fun_declarator 
 		{
-			curFuncName=($2).v.vname; 
+			curFuncName=($2).v.vname;
 			curLocal.symbols.clear(); 
 			($2).v.vtype.base.type = ($1).type;
 			($2).v.size = -getSize(($2).v);
@@ -272,6 +272,8 @@ primary_expression
 		| STRING_LITERAL {
 			auto temp = new stringconst_astnode($1);
 			temp->expType = type(baseType("string", 0), vector<int>(0));
+			temp->sid = sid++;
+			globalStrings[temp->sid]=($1);
 			($$)=temp;
 		}
 		| '(' expression ')' {
@@ -609,23 +611,36 @@ postfix_expression
 			($$) = $1;
 		}
 		| IDENTIFIER '(' ')' {
+			parameterStack.push(parameterTypes);
+			isPrintfStack.push(isPrintf);
+			parameterTypes.clear();
+			isPrintf=($1=="printf");
+				
 			auto temp = new funcall_astnode($1, std::vector<exp_astnode*>(0));
 			if(gst.symbols.find($1)==gst.symbols.end()){
-				showError("Function not defined");
+				if(!isPrintf)
+					showError("Function not defined");
 			}
 			temp->expType = gst.symbols[($1)].v.vtype;
 			if(gst.symbols[($1)].args.size()!=0){
-				showError("Incorrect number of arguments");
+				if(!isPrintf)
+					showError("Incorrect number of arguments");
 			}
+			parameterTypes = parameterStack.top();
+			parameterStack.pop();
+			isPrintf = isPrintfStack.top();
+			isPrintfStack.pop();
 			($$)=temp;
 		}
 		| IDENTIFIER '(' {
-
 				// push existing parameterTypes on stack
 				parameterStack.push(parameterTypes);
-
+				isPrintfStack.push(isPrintf);
 				parameterTypes.clear();
+				isPrintf=($1=="printf");
+
 				if(gst.symbols.find($1)==gst.symbols.end()){
+					if(!isPrintf)
 					showError("Function not defined");
 				}
 				for(auto x: gst.symbols[($1)].args){
@@ -636,12 +651,15 @@ postfix_expression
 				auto temp = new funcall_astnode($1, $4);
 				temp->expType = gst.symbols[($1)].v.vtype;
 				if(parameterTypes.size()!=0){
-					showError("Incorrect number of arguments");
+					if(!isPrintf)
+						showError("Incorrect number of arguments");
 				}
 				// pop from stack
 				parameterTypes = parameterStack.top();
 				parameterStack.pop();
-
+				isPrintf = isPrintfStack.top();
+				isPrintfStack.pop();
+			
 				($$)=temp;
 			}
 		| postfix_expression '[' expression ']' {
@@ -728,7 +746,8 @@ postfix_expression
 expression_list
 		: expression {
 			if(parameterTypes.size()==0){
-				showError("asdadIncorrect number of arguments", -1); // TODO
+				if(!isPrintf)
+					showError("Incorrect number of arguments", -1); // TODO
 			}
 			else{
 				unaryTypeCheck(parameterTypes[0], $1);
@@ -739,7 +758,8 @@ expression_list
 		}
 		| expression_list ',' expression {
 			if(parameterTypes.size()==0){
-				showError("Incorrect number of arguments", -1); // TODO
+				if(!isPrintf)
+					showError("Incorrect number of arguments", -1); // TODO
 			}
 			else{
 				unaryTypeCheck(parameterTypes[0], $3);

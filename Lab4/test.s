@@ -1,15 +1,16 @@
 .data
 space: .asciiz "\n"
 .text
-# setup of unwrap
-F_unwrap:
+# setup of f
+F_f:
 sw $ra, 4($sp)
 addi $t1, $sp, 8
-lw $t1, 0($t1)
 sw $t1, -4($sp)
 lw $t0, -4($sp)
-lw $t0, 0($t0)
-sw $t0, -8($sp)
+lw $t1, 0($t0)
+addi $t2, $t1, 1
+sw $t2, 0($t0)
+sw $t1, -8($sp)
 # copying to RV
 addi $t0, $sp, 12
 addi $t1, $sp, -8
@@ -28,49 +29,36 @@ main:
 sw $ra, 4($sp)
 addi $t1, $sp, -4
 sw $t1, -12($sp)
-lw $t0, -12($sp)
-addi $t0, $t0, 0
-sw $t0, -16($sp)
 # loading intconst
-addi $t0, $0, 5
-sw $t0, -20($sp)
+addi $t0, $0, 1
+sw $t0, -16($sp)
 # assignment
-lw $t0, -20($sp)
-lw $t1, -16($sp)
-sw $t0, 0($t1)
-sw $t0, -24($sp)
-addi $t1, $sp, -8
-sw $t1, -12($sp)
-lw $t0, -12($sp)
-addi $t0, $t0, 0
-sw $t0, -16($sp)
-addi $t1, $sp, -4
-addi $t0, $sp, -20
-lw $t2 0($t1)
-sw $t2 0($t0)
-addi $t1, $sp, -20
 lw $t0, -16($sp)
-lw $t2 0($t1)
-sw $t2 0($t0)
-addi $t0, $sp, -24
-lw $t2 0($t1)
-sw $t2 0($t0)
+lw $t1, -12($sp)
+sw $t0, 0($t1)
+sw $t0, -20($sp)
 addi $t1, $sp, -8
 sw $t1, -12($sp)
-lw $t0, -12($sp)
-sw $t0, -16($sp)
+addi $t1, $sp, -4
+lw $t1, 0($t1)
+sw $t1, -16($sp)
 addi $t0, $sp, -24
 addi $t1, $sp, -16
 lw $t2 0($t1)
 sw $t2 0($t0)
 sw $sp, -32($sp)
 addi $sp, $sp, -32
-jal F_unwrap
+jal F_f
+# assignment
 lw $t0, -20($sp)
+lw $t1, -12($sp)
+sw $t0, 0($t1)
 sw $t0, -32($sp)
-lw $t0, -32($sp)
-li $v0, 1
-add $a0, $0, $t0
+addi $t1, $sp, -4
+lw $t1, 0($t1)
+sw $t1, -12($sp)
+l.s $f12, -12($sp)
+li $v0, 2
 syscall
 addi $v0, $0, 4
 la $a0, space

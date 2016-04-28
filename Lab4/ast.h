@@ -15,6 +15,7 @@ public:
 	virtual void print(int)=0;
 	string code;
 	int tempOffset;
+	int sid;
 
 	virtual void gencode(int) = 0;
 	
