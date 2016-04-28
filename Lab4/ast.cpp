@@ -965,7 +965,7 @@ void funcall_astnode::gencode(int accessType){
 	if(funcName=="printf"){
 		for(auto v: nodes){
 			v->gencode(1);
-			if(v->expType.base.type == "float"){
+			if(v->expType.base.type == "float" && v->expType.base.pointers==0){
 				cout<<"l.s $f12, "<<v->tempOffset<<"($sp)"<<endl;
 				cout<<"li $v0, 2"<<endl;
 				cout<<"syscall"<<endl;
@@ -973,7 +973,7 @@ void funcall_astnode::gencode(int accessType){
 				cout<<"la $a0, space"<<endl;
 				cout<<"syscall"<<endl;
 			}
-			else if(v->expType.base.type == "int"){
+			else if(v->expType.base.type != "string" || v->expType.base.pointers!=0){
 				cout<<"lw $t0, "<<v->tempOffset<<"($sp)"<<endl;
 				cout<<"li $v0, 1"<<endl;
 				cout<<"add $a0, $0, $t0"<<endl;
@@ -982,7 +982,7 @@ void funcall_astnode::gencode(int accessType){
 				cout<<"la $a0, space"<<endl;
 				cout<<"syscall"<<endl;
 			}
-			else if(v->expType.base.type == "string"){
+			else if(v->expType.base.type == "string"  && v->expType.base.pointers==0){
 				cout<<"li $v0, 4"<<endl;
 				stringconst_astnode* s = (stringconst_astnode*)v;
 				cout<<"la $a0, "<<s->sname<<endl;
@@ -1018,7 +1018,8 @@ void funcall_astnode::gencode(int accessType){
 		type t = e->expType;
 		// tempOffsets-=4; // buffer
 		int argsize = getSize(variable(t, "", 0, 0));
-		
+		if(t.sizes.size()!=0) argsize=4;
+		//cerr<<argsize<<endl;
 		if(isBasic(t) && e->typeCasted){
 			if(t.base.type == "float"){
 				// original type was int now changed to float
@@ -1035,12 +1036,23 @@ void funcall_astnode::gencode(int accessType){
 				cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;
 			}
 		}
-		else{
+		else if(t.base.type[0]=='s' && t.base.pointers==0 && t.sizes.size()==0){
 			cout<<"addi $t0, $sp, "<<tempOffsets<<endl;
 			cout<<"addi $t1, $sp, "<<e->tempOffset<<endl;
 			copyStruct(argsize);
 			//cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
 			//cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;	
+		}
+		else{
+			// cerr<<e->expType.base.type<<endl;
+			cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
+			// cout<<"li $v0, 1"<<endl;
+			// cout<<"add $a0, $0, $t0"<<endl;
+			// cout<<"syscall"<<endl;
+			// cout<<"li $v0 4"<<endl;
+			// cout<<"la $a0, space"<<endl;
+			// cout<<"syscall"<<endl;
+			cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;
 		}
 		
 		tempOffsets-=argsize; // param
@@ -1127,6 +1139,7 @@ void identifier_astnode::gencode(int accessType){
 	if(accessType==0){
 		cerr<<"Should never happen"<<endl;
 	}
+	//cerr<<name<<" "<<variableOffset<<endl;
 	cout<<"addi $t1, $sp, "<<variableOffset<<endl;
 	if(expType.base.type[0]=='s' && expType.base.pointers==0 && expType.sizes.size()==0){
 		if(accessType==1){
@@ -1138,8 +1151,12 @@ void identifier_astnode::gencode(int accessType){
 			return;
 		}
 	}
-	else{
+	else if(expType.sizes.size()==0){
 		if(accessType==1) cout<<"lw $t1, 0($t1)"<<endl;
+	}
+	else if(variableOffset>0 && expType.sizes.size()!=0){
+		cout<<"lw $t1, 0($t1)"<<endl;
+		// 4+-getSize(variabe(expType, "", 0, 0))
 	}
 	tempOffset=tempOffsets;
 	tempOffsets-=4;
@@ -1165,7 +1182,23 @@ void arrayref_astnode::print(int l){
 
 void arrayref_astnode::gencode(int accessType){
 	if(accessType==0) cerr<<"Should never happen"<<endl;
-	base->gencode(2);
+	if(base->expType.base.pointers!=0){
+		base->gencode(1);
+		
+		// cout<<"li $v0 4"<<endl;
+		// cout<<"la $a0, space"<<endl;
+		// cout<<"syscall"<<endl;cout<<"lw $t0, "<<base->tempOffset<<"($sp)"<<endl;
+		// cout<<"li $v0, 1"<<endl;
+		// cout<<"add $a0, $0, $t0"<<endl;
+		// cout<<"syscall"<<endl;
+		// cout<<"li $v0 4"<<endl;
+		// cout<<"la $a0, newl"<<endl;
+		// cout<<"syscall"<<endl;
+
+	}
+	else {
+		base->gencode(2);
+	}
 	offset->gencode(1);
 	int t=4;
 	type tempType = base->expType;
@@ -1178,6 +1211,15 @@ void arrayref_astnode::gencode(int accessType){
 	cout<<"mul $t0, $t0, $t1"<<endl;
 	cout<<"lw $t1, "<<base->tempOffset<<"($sp)"<<endl;
 	cout<<"sub $t0, $t1, $t0"<<endl;
+	
+	// cout<<"li $v0, 1"<<endl;
+	// cout<<"add $a0, $0, $t0"<<endl;
+	// cout<<"syscall"<<endl;
+	// cout<<"li $v0 4"<<endl;
+	// cout<<"la $a0, newl"<<endl;
+	// cout<<"syscall"<<endl;
+
+
 	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
 	tempOffset=tempOffsets;
 	tempOffsets -= 4;

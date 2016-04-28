@@ -25,7 +25,7 @@ int main (int argc, char** arg)
 	}
 	cout<<"newl: .asciiz \"\\n\""<<endl;
 	cout<<"space: .asciiz \" \""<<endl;
-	//gst.print();
+	// gst.print();
 }
 
 

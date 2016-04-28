@@ -98,6 +98,9 @@ function_definition
 				localSymbolTableRow lstr;
 				variable temp = args[i];
 				temp.size=getSize(temp);
+				if(temp.vtype.sizes.size()!=0){
+					temp.size=4;
+				}
 				count+=temp.size;
 			}
 			int offset=-count;
@@ -105,7 +108,10 @@ function_definition
 				localSymbolTableRow lstr;
 				variable temp = args[i];
 				temp.offset = -offset+4;
-				temp.size = getSize(temp); 
+				temp.size = getSize(temp);
+				if(temp.vtype.sizes.size()!=0){
+					temp.size=4;
+				} 
 				offset+=temp.size;
 				lstr.v=temp;
 				lst.symbols[lstr.v.vname]=lstr;
