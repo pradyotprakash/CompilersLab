@@ -1004,7 +1004,7 @@ void funcall_astnode::gencode(int accessType){
         return;
 	}
 
-	int sizet = getSize(gst.symbols[funcName].v);
+	int sizet = gst.symbols[funcName].v.size;
 	
 	// tempOffsets-=4; // buffer for some reason
 	for(auto e: nodes){
@@ -1044,14 +1044,7 @@ void funcall_astnode::gencode(int accessType){
 			//cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;	
 		}
 		else{
-			// cerr<<e->expType.base.type<<endl;
 			cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
-			// cout<<"li $v0, 1"<<endl;
-			// cout<<"add $a0, $0, $t0"<<endl;
-			// cout<<"syscall"<<endl;
-			// cout<<"li $v0 4"<<endl;
-			// cout<<"la $a0, space"<<endl;
-			// cout<<"syscall"<<endl;
 			cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;
 		}
 		
@@ -1143,7 +1136,7 @@ void identifier_astnode::gencode(int accessType){
 	cout<<"addi $t1, $sp, "<<variableOffset<<endl;
 	if(expType.base.type[0]=='s' && expType.base.pointers==0 && expType.sizes.size()==0){
 		if(accessType==1){
-			int size = getSize(variable(expType, "", 0, 0));
+			int size = lst.symbols[name].v.size;
 			tempOffset=tempOffsets;
 			tempOffsets-=size;
 			cout<<"addi $t0, $sp, "<<tempOffset<<endl;
@@ -1156,7 +1149,6 @@ void identifier_astnode::gencode(int accessType){
 	}
 	else if(variableOffset>0 && expType.sizes.size()!=0){
 		cout<<"lw $t1, 0($t1)"<<endl;
-		// 4+-getSize(variabe(expType, "", 0, 0))
 	}
 	tempOffset=tempOffsets;
 	tempOffsets-=4;
