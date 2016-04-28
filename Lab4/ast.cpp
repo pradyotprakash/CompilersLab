@@ -1178,48 +1178,47 @@ void arrayref_astnode::print(int l){
 
 void arrayref_astnode::gencode(int accessType){
 	if(accessType==0) cerr<<"Should never happen"<<endl;
-	if(base->expType.base.pointers!=0){
+	
+	if(base->expType.sizes.size()==0){
 		base->gencode(1);
-		
-		// cout<<"li $v0 4"<<endl;
-		// cout<<"la $a0, space"<<endl;
-		// cout<<"syscall"<<endl;cout<<"lw $t0, "<<base->tempOffset<<"($sp)"<<endl;
-		// cout<<"li $v0, 1"<<endl;
-		// cout<<"add $a0, $0, $t0"<<endl;
-		// cout<<"syscall"<<endl;
-		// cout<<"li $v0 4"<<endl;
-		// cout<<"la $a0, newl"<<endl;
-		// cout<<"syscall"<<endl;
-
 	}
 	else {
 		base->gencode(2);
 	}
 	offset->gencode(1);
-	int t=4;
+	
+	int t;
 	type tempType = base->expType;
 	if(tempType.sizes.size()!=0){
-		tempType.sizes.erase(tempType.sizes.begin());
-		t = getSize(variable(tempType, "", 0, 0));
+		type tt = tempType;
+		tt.sizes.erase(tt.sizes.begin());
+		t = getSize(variable(tt, "", 0, 0));
 	}
+	else{
+		type tt = tempType;
+		tt.base.pointers--;
+		t = getSize(variable(tt, "", 0, 0));
+	}
+
 	cout<<"lw $t0, "<<offset->tempOffset<<"($sp)"<<endl;
 	cout<<"addi $t1, $0, "<<t<<endl;
 	cout<<"mul $t0, $t0, $t1"<<endl;
 	cout<<"lw $t1, "<<base->tempOffset<<"($sp)"<<endl;
-	cout<<"sub $t0, $t1, $t0"<<endl;
+	cout<<"sub $t1, $t1, $t0"<<endl;
+
+	// $t1 now holds address of to be found
+	// t holds size of element, since we must be at the last [ ]
+	if(accessType==1){
+		cout<<"addi $t0, $sp, "<<tempOffsets<<endl;
+		tempOffset=tempOffsets;
+		tempOffsets-=t;
+		copyStruct(t);
+		return;
+	}
 	
-	// cout<<"li $v0, 1"<<endl;
-	// cout<<"add $a0, $0, $t0"<<endl;
-	// cout<<"syscall"<<endl;
-	// cout<<"li $v0 4"<<endl;
-	// cout<<"la $a0, newl"<<endl;
-	// cout<<"syscall"<<endl;
-
-
-	if(accessType==1) cout<<"lw $t0, 0($t0)"<<endl;
 	tempOffset=tempOffsets;
 	tempOffsets -= 4;
-	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+	cout<<"sw $t1, "<<tempOffset<<"($sp)"<<endl;
 }
 
 member_astnode::member_astnode(exp_astnode* n, identifier_astnode* i){
