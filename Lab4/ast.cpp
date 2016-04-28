@@ -334,6 +334,7 @@ void assign_exp_astnode::gencode(int accessType){
 		cout<<"addi $t1, $sp, "<<r->tempOffset<<endl;
 		cout<<"lw $t0, "<<l->tempOffset<<"($sp)"<<endl;
 		copyStruct(size);
+		//cerr<<size<<endl;
 		tempOffset=tempOffsets;
 		tempOffsets-=size;
 		cout<<"addi $t0, $sp, "<<tempOffset<<endl;
@@ -370,7 +371,7 @@ void return_astnode::gencode(int accessType){
 	// TODO: struct copying
 	variable v=variable(node->expType, "", 0, 0);
 	int retsize = getSize(v);
-		
+	//cerr<<retsize<<endl;
 	int rlocation = 4+retsize + gst.getTotalArgsSize("function "+curFuncName);
 	
 	cout<<"# copying to RV"<<endl;
@@ -1013,7 +1014,6 @@ void funcall_astnode::gencode(int accessType){
 		e->gencode(1);
 	}
 	int sizet = abs(gst.symbols[funcName].v.size);
-	cerr<<sizet<<endl;
 	tempOffset=tempOffsets;
 	tempOffsets-=sizet; // RV
 	
@@ -1021,7 +1021,8 @@ void funcall_astnode::gencode(int accessType){
 		type t = e->expType;
 		// tempOffsets-=4; // buffer
 		int argsize = abs(getSize(variable(t, "", 0, 0)));
-		if(t.base.type[0]!='s' && t.sizes.size()!=0) argsize=4;
+		if(t.sizes.size()!=0) argsize=4;
+
 		//cerr<<argsize<<endl;
 		if(isBasic(t) && e->typeCasted){
 			if(t.base.type == "float"){
@@ -1245,18 +1246,18 @@ void member_astnode::gencode(int accessType){
 		localSymbolTable lst = gst.symboltables[node->expType.base.type];
 		int varOffset = lst.symbols[id->name].v.offset;
 		// TODO for struct
-
-		cout<<"lw $t0, "<<(varOffset+offset)<<"($sp)"<<endl;	// offset to member
+		int size = lst.symbols[id->name].v.size;
+		cout<<"addi $t0, $sp, "<<tempOffsets<<endl;
+		cout<<"addi $t1, $sp, "<<offset+varOffset<<endl;
+		copyStruct(size);
 		tempOffset=tempOffsets;
-		tempOffsets-=4;
-		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+		tempOffsets-=size;
 		return;
 	}
 	node->gencode(2);
 	int offset = node->tempOffset;
 	localSymbolTable lst = gst.symboltables[node->expType.base.type];
 	int varOffset = lst.symbols[id->name].v.offset;
-	
 	cout<<"lw $t0, "<<offset<<"($sp)"<<endl;
 	cout<<"addi $t0, $t0, "<<(varOffset)<<endl;
 	tempOffset=tempOffsets;
@@ -1290,13 +1291,22 @@ void arrow_astnode::gencode(int accessType){
 		
 
 	if(accessType==1){
-		cout<<"lw $t0, "<<offset<<"($sp)"<<endl;	// address of struct base
-		cout<<"lw $t0, "<<(varOffset)<<"($t0)"<<endl;	// offset to member
+		// cout<<"lw $t0, "<<offset<<"($sp)"<<endl;	// address of struct base
+		// cout<<"lw $t0, "<<(varOffset)<<"($t0)"<<endl;	// offset to member
 		// TODO for struct
-
+		int size = lst.symbols[id->name].v.size;
+		
+		cout<<"addi $t0, $sp, "<<tempOffsets<<endl;
+		cout<<"lw $t1, "<<offset<<"($sp)"<<endl;
+		cout<<"addi $t1, $t1, "<<varOffset<<endl;
+		copyStruct(size);
 		tempOffset=tempOffsets;
-		tempOffsets-=4;
-		cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
+		tempOffsets-=size;
+	
+
+		// tempOffset=tempOffsets;
+		// tempOffsets-=4;
+		// cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 		return;
 	}
 
