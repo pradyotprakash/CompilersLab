@@ -30,7 +30,7 @@ struct 			return Parser::STRUCT;	//
 
 ([0-9]+\.([0-9]*([eE]([+\-]?)[0-9]+)?))|([0-9]*\.([0-9]+([eE]([+\-]?)[0-9]+)?)) {Parser::d_val__ = stof(std::string(matched())); return Parser::FLOAT_CONSTANT;}
 
-\"[[:alpha:][:digit:]( )(\t)(\n)(\\)(\")]*\" {Parser::d_val__ = std::string(matched()); return Parser::STRING_LITERAL;}
+\"[[:alpha:][:digit:]( )(\t)(\n)(\\)(\"):]*\" {Parser::d_val__ = std::string(matched()); return Parser::STRING_LITERAL;}
 
 [[:alpha:]_][[:alpha:][:digit:]_]*	{Parser::d_val__ = std::string(matched()); return Parser::IDENTIFIER;}
 .				{Parser::d_val__ = std::string(matched()); return matched()[0];}

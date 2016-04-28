@@ -138,13 +138,13 @@ public:
 	map<std::string, localSymbolTable> symboltables; // should be used for structs and function bodies
 	
 	globalSymbolTable(){
-		globalSymbolTableRow printrow;
+		// globalSymbolTableRow printrow;
 
-		printrow.isFunction=true;
-		printrow.v=variable(type(baseType("void", 0), vector<int>(0)), "print", 0, 0);
-		printrow.args=vector<variable>(1, variable(type(baseType("int", 0), vector<int>(0)), "toPrint", 0, 0));
+		// printrow.isFunction=true;
+		// printrow.v=variable(type(baseType("void", 0), vector<int>(0)), "print", 0, 0);
+		// printrow.args=vector<variable>(0);
 
-		symbols["print"]=printrow;
+		// symbols["print"]=printrow;
 
 		globalSymbolTableRow printnrow;
 		printnrow.isFunction=true;
@@ -157,13 +157,13 @@ public:
 
 		printfrow.isFunction=true;
 		printfrow.v=variable(type(baseType("void", 0), vector<int>(0)), "printf", 0, 0);
-		printfrow.args=vector<variable>(1, variable(type(baseType("float", 0), vector<int>(0)), "toPrint", 0, 0));
+		printfrow.args=vector<variable>(0);
 
 		symbols["printf"]=printfrow;
 
-		cout<<".data"<<endl;
-		cout<<"space: .asciiz \"\\n\""<<endl;
-		cout<<".text"<<endl;
+		// cout<<".data"<<endl;
+		// cout<<"space: .asciiz \"\\n\""<<endl;
+		// cout<<".text"<<endl;
 		
 
 	}

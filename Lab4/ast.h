@@ -170,10 +170,10 @@ public:
 };
 
 class stringconst_astnode: public exp_astnode{
-protected:
-	std::string val;
 public:
-	stringconst_astnode(std::string);
+	std::string val;
+	string sname;
+	stringconst_astnode(std::string, int);
 	void print(int);
 	void gencode(int);
 };

@@ -962,30 +962,44 @@ void funcall_astnode::print(int l){
 }
 
 void funcall_astnode::gencode(int accessType){
-	if(funcName=="print"){
-		nodes[0]->gencode(1);
-		cout<<"lw $t0, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
-		cout<<"li $v0, 1"<<endl;
-		cout<<"add $a0, $0, $t0"<<endl;
-		cout<<"syscall"<<endl;
-		cout<<"addi $v0, $0, 4"<<endl;
-		cout<<"la $a0, space"<<endl;
-		cout<<"syscall"<<endl;
-		return;
-	}
 	if(funcName=="printf"){
-		nodes[0]->gencode(1);
-		cout<<"l.s $f12, "<<nodes[0]->tempOffset<<"($sp)"<<endl;
-		cout<<"li $v0, 2"<<endl;
-		cout<<"syscall"<<endl;
+		for(auto v: nodes){
+			v->gencode(1);
+			if(v->expType.base.type == "float"){
+				cout<<"l.s $f12, "<<v->tempOffset<<"($sp)"<<endl;
+				cout<<"li $v0, 2"<<endl;
+				cout<<"syscall"<<endl;
+				cout<<"li $v0 4"<<endl;
+				cout<<"la $a0, space"<<endl;
+				cout<<"syscall"<<endl;
+			}
+			else if(v->expType.base.type == "int"){
+				cout<<"lw $t0, "<<v->tempOffset<<"($sp)"<<endl;
+				cout<<"li $v0, 1"<<endl;
+				cout<<"add $a0, $0, $t0"<<endl;
+				cout<<"syscall"<<endl;
+				cout<<"li $v0 4"<<endl;
+				cout<<"la $a0, space"<<endl;
+				cout<<"syscall"<<endl;
+			}
+			else if(v->expType.base.type == "string"){
+				cout<<"li $v0, 4"<<endl;
+				stringconst_astnode* s = (stringconst_astnode*)v;
+				cout<<"la $a0, "<<s->sname<<endl;
+				cout<<"syscall"<<endl;
+				cout<<"li $v0 4"<<endl;
+				cout<<"la $a0, space"<<endl;
+				cout<<"syscall"<<endl;
+			}
+		}
 		cout<<"addi $v0, $0, 4"<<endl;
-		cout<<"la $a0, space"<<endl;
+		cout<<"la $a0, newl"<<endl;
 		cout<<"syscall"<<endl;
 		return;
 	}
 	if(funcName=="printn"){
 		cout<<"addi $v0, $0, 4"<<endl;
-		cout<<"la $a0, space"<<endl;
+		cout<<"la $a0, newl"<<endl;
 		cout<<"syscall"<<endl;
         return;
 	}
@@ -1080,8 +1094,9 @@ void intconst_astnode::gencode(int accessType){
 	cout<<"sw $t0, "<<tempOffset<<"($sp)"<<endl;
 }
 
-stringconst_astnode::stringconst_astnode(std::string n){
+stringconst_astnode::stringconst_astnode(std::string n, int s){
 	val=n;
+	sname = "S_" + to_string(s);
 }
 
 void stringconst_astnode::print(int l){
@@ -1091,7 +1106,9 @@ void stringconst_astnode::print(int l){
 }
 
 void stringconst_astnode::gencode(int accessType){
-	// TODO: everything
+	// can only be used in printf, so put special
+	// consideration for that here
+
 }
 
 identifier_astnode::identifier_astnode(std::string n){

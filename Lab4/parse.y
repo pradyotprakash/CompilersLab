@@ -270,7 +270,7 @@ primary_expression
 			($$)=temp;
 		}
 		| STRING_LITERAL {
-			auto temp = new stringconst_astnode($1);
+			auto temp = new stringconst_astnode($1, sid);
 			temp->expType = type(baseType("string", 0), vector<int>(0));
 			temp->sid = sid++;
 			globalStrings[temp->sid]=($1);
@@ -614,8 +614,8 @@ postfix_expression
 			parameterStack.push(parameterTypes);
 			isPrintfStack.push(isPrintf);
 			parameterTypes.clear();
-			isPrintf=($1=="printf");
-				
+			isPrintf=(($1)=="printf");
+
 			auto temp = new funcall_astnode($1, std::vector<exp_astnode*>(0));
 			if(gst.symbols.find($1)==gst.symbols.end()){
 				if(!isPrintf)
@@ -637,11 +637,11 @@ postfix_expression
 				parameterStack.push(parameterTypes);
 				isPrintfStack.push(isPrintf);
 				parameterTypes.clear();
-				isPrintf=($1=="printf");
+				isPrintf=(($1)=="printf");
 
 				if(gst.symbols.find($1)==gst.symbols.end()){
 					if(!isPrintf)
-					showError("Function not defined");
+						showError("Function not defined");
 				}
 				for(auto x: gst.symbols[($1)].args){
 					parameterTypes.push_back(x.vtype);
@@ -654,12 +654,13 @@ postfix_expression
 					if(!isPrintf)
 						showError("Incorrect number of arguments");
 				}
+			
 				// pop from stack
 				parameterTypes = parameterStack.top();
 				parameterStack.pop();
 				isPrintf = isPrintfStack.top();
 				isPrintfStack.pop();
-			
+				
 				($$)=temp;
 			}
 		| postfix_expression '[' expression ']' {
@@ -745,27 +746,38 @@ postfix_expression
 
 expression_list
 		: expression {
-			if(parameterTypes.size()==0){
-				if(!isPrintf)
+			if(!isPrintf){
+				if(parameterTypes.size()==0){
 					showError("Incorrect number of arguments", -1); // TODO
+				}
+				else{
+					unaryTypeCheck(parameterTypes[0], $1);
+					auto temp = vector<exp_astnode*>(1, $1);
+					parameterTypes.erase(parameterTypes.begin());
+					($$)=temp;
+				}
 			}
 			else{
-				unaryTypeCheck(parameterTypes[0], $1);
 				auto temp = vector<exp_astnode*>(1, $1);
-				parameterTypes.erase(parameterTypes.begin());
 				($$)=temp;
 			}
 		}
 		| expression_list ',' expression {
-			if(parameterTypes.size()==0){
-				if(!isPrintf)
+			if(!isPrintf){
+				if(parameterTypes.size()==0){
 					showError("Incorrect number of arguments", -1); // TODO
+				}
+				else{
+					unaryTypeCheck(parameterTypes[0], $3);
+					auto temp = $1;
+					temp.push_back($3);
+					parameterTypes.erase(parameterTypes.begin());
+					($$)=temp;
+				}
 			}
 			else{
-				unaryTypeCheck(parameterTypes[0], $3);
 				auto temp = $1;
 				temp.push_back($3);
-				parameterTypes.erase(parameterTypes.begin());
 				($$)=temp;
 			}
 		}

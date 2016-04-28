@@ -13,15 +13,19 @@ using namespace std;
 
 int main (int argc, char** arg)
 {
-  Parser parser;
-  parser.parse();
-  if(gst.symbols.find("main")==gst.symbols.end()){
-  	showWarning("Main has not been defined", 0);
-  }
-  for(auto v: globalStrings){
-  	cout<<v.first<<" "<<v.second<<endl;
-  }
-  //gst.print();
+	cout<<".text"<<endl;
+	Parser parser;
+	parser.parse();
+	if(gst.symbols.find("main")==gst.symbols.end()){
+		showWarning("Main has not been defined", 0);
+	}
+	cout<<".data"<<endl;
+	for(auto v: globalStrings){
+		cout<<"S_"<<v.first<<": .asciiz "<<v.second<<endl;
+	}
+	cout<<"newl: .asciiz \"\\n\""<<endl;
+	cout<<"space: .asciiz \" \""<<endl;
+	//gst.print();
 }
 
 
