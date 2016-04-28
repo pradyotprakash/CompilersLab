@@ -44,12 +44,19 @@
 // 	return mid;
 // }
 
-void f(int b){
-	b++;
-	print(b);
+struct s{
+	int x;
+};
+
+struct s g(int y){
+	struct s a;
+	a.x=y;
+	return a;
 }
 
 int main(){
-	f(1.3);
+	struct s x;
+	x=g(10);
+	print(x.x);
 	return 0;
 }

@@ -365,7 +365,6 @@ void return_astnode::print(int l){
 void return_astnode::gencode(int accessType){
 	node->gencode(1);
 	// TODO: struct copying
-	// TODO: typecasting
 	int rlocation = 8 + gst.getTotalArgsSize("function "+curFuncName);
 	cout<<"# copying to RV"<<endl;
 	
@@ -386,9 +385,15 @@ void return_astnode::gencode(int accessType){
 		}
 	}
 	else{
-		cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
-		cout<<"sw $t0, "<<rlocation<<"($sp)"<<endl;
-		cout<<"add $v0, $t0, $0"<<endl;
+		variable v=variable(node->expType, "", 0, 0);
+		int retsize = getSize(v);
+		cout<<"addi $t0, $sp, "<<rlocation<<endl;
+		cout<<"addi $t1, $sp, "<<node->tempOffset<<endl;
+		copyStruct(retsize);
+
+		//cout<<"lw $t0, "<<node->tempOffset<<"($sp)"<<endl;
+		//cout<<"sw $t0, "<<rlocation<<"($sp)"<<endl;
+		//cout<<"add $v0, $t0, $0"<<endl;
 	}
 
 	cout<<"# returning"<<endl;
@@ -900,8 +905,11 @@ void funcall_astnode::gencode(int accessType){
 			}
 		}
 		else{
-			cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
-			cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;	
+			cout<<"addi $t0, $sp, "<<tempOffsets<<endl;
+			cout<<"addi $t1, $sp, "<<e->tempOffset<<endl;
+			copyStruct(argsize);
+			//cout<<"lw $t0, "<<e->tempOffset<<"($sp)"<<endl;
+			//cout<<"sw $t0, "<<tempOffsets<<"($sp)"<<endl;	
 		}
 		
 		tempOffsets-=argsize; // param
