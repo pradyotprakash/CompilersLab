@@ -627,6 +627,9 @@ postfix_expression
 				if(!isPrintf)
 					showError("Function not defined");
 			}
+			if(curLocal.symbols.find(($1)) != curLocal.symbols.end()){
+				showError("Not a function");
+			}
 			temp->expType = gst.symbols[($1)].v.vtype;
 			if(gst.symbols[($1)].args.size()!=0){
 				if(!isPrintf)
@@ -648,6 +651,9 @@ postfix_expression
 				if(gst.symbols.find($1)==gst.symbols.end()){
 					if(!isPrintf)
 						showError("Function not defined");
+				}
+				if(curLocal.symbols.find(($1)) != curLocal.symbols.end()){
+					showError("Not a function");
 				}
 				for(auto x: gst.symbols[($1)].args){
 					parameterTypes.push_back(x.vtype);

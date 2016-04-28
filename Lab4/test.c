@@ -1,9 +1,8 @@
-void f(int *a){
-	a[5]=10;
+int f(int a) {
+    return a+1;
 }
-
-void main(){
-	int a[20][20];
-	f(a[5]);
-	printf(a[5][5]);
+int main() {
+    int f, g;
+    g = f(4);
+    return 0;
 }
