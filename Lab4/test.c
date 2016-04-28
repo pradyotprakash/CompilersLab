@@ -44,19 +44,24 @@
 // 	return mid;
 // }
 
-struct s{
-	int x;
+struct inner{
+	int val;
 };
 
-struct s g(int y){
-	struct s a;
-	a.x=y;
-	return a;
+struct outer{
+	struct inner a;
+};
+
+struct inner unwrap(struct outer* o){
+	return o->a;
 }
 
 int main(){
-	struct s x;
-	x=g(10);
-	print(x.x);
+	struct inner i;
+	struct outer o;
+	i.val=5;
+	o.a=i;
+	print(unwrap(&o).val);
+
 	return 0;
 }
