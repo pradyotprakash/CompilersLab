@@ -1,4 +1,4 @@
-void f(int a[10]){
+void f(int *a){
 	a[5]=10;
 }
 

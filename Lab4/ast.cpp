@@ -1010,8 +1010,12 @@ void funcall_astnode::gencode(int accessType){
 
 	
 	// tempOffsets-=4; // buffer for some reason
-	for(auto e: nodes){
-		e->gencode(1);
+	auto args = gst.symbols[funcName].args;
+	for(unsigned int i=0; i<args.size(); i++){
+		//variable v = args[i];
+		if(nodes[i]->expType.sizes.size()==0)
+			nodes[i]->gencode(1);
+		else nodes[i]->gencode(2);	
 	}
 	int sizet = abs(gst.symbols[funcName].v.size);
 	tempOffset=tempOffsets;
