@@ -368,7 +368,11 @@ void return_astnode::print(int l){
 void return_astnode::gencode(int accessType){
 	node->gencode(1);
 	// TODO: struct copying
-	int rlocation = 8 + gst.getTotalArgsSize("function "+curFuncName);
+	variable v=variable(node->expType, "", 0, 0);
+	int retsize = getSize(v);
+		
+	int rlocation = 4+retsize + gst.getTotalArgsSize("function "+curFuncName);
+	
 	cout<<"# copying to RV"<<endl;
 	
 	if(isBasic(node->expType) && node->typeCasted){
@@ -388,8 +392,7 @@ void return_astnode::gencode(int accessType){
 		}
 	}
 	else{
-		variable v=variable(node->expType, "", 0, 0);
-		int retsize = getSize(v);
+		cout<<"# rlocation here "<<rlocation<<endl;
 		cout<<"addi $t0, $sp, "<<rlocation<<endl;
 		cout<<"addi $t1, $sp, "<<node->tempOffset<<endl;
 		copyStruct(retsize);
@@ -1004,21 +1007,21 @@ void funcall_astnode::gencode(int accessType){
         return;
 	}
 
-	int sizet = gst.symbols[funcName].v.size;
 	
 	// tempOffsets-=4; // buffer for some reason
 	for(auto e: nodes){
 		e->gencode(1);
 	}
-
+	int sizet = abs(gst.symbols[funcName].v.size);
+	cerr<<sizet<<endl;
 	tempOffset=tempOffsets;
 	tempOffsets-=sizet; // RV
 	
 	for(auto e: nodes){
 		type t = e->expType;
 		// tempOffsets-=4; // buffer
-		int argsize = getSize(variable(t, "", 0, 0));
-		if(t.sizes.size()!=0) argsize=4;
+		int argsize = abs(getSize(variable(t, "", 0, 0)));
+		if(t.base.type[0]!='s' && t.sizes.size()!=0) argsize=4;
 		//cerr<<argsize<<endl;
 		if(isBasic(t) && e->typeCasted){
 			if(t.base.type == "float"){
@@ -1136,7 +1139,7 @@ void identifier_astnode::gencode(int accessType){
 	cout<<"addi $t1, $sp, "<<variableOffset<<endl;
 	if(expType.base.type[0]=='s' && expType.base.pointers==0 && expType.sizes.size()==0){
 		if(accessType==1){
-			int size = lst.symbols[name].v.size;
+			int size = abs(lst.symbols[name].v.size);
 			tempOffset=tempOffsets;
 			tempOffsets-=size;
 			cout<<"addi $t0, $sp, "<<tempOffset<<endl;
